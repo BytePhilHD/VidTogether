@@ -3,6 +3,7 @@ package app;
 import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
+import io.javalin.plugin.rendering.vue.VueComponent;
 import io.javalin.websocket.WsConnectContext;
 import org.eclipse.jetty.websocket.api.Session;
 import utils.Console;
@@ -54,21 +55,20 @@ public class App {
                 Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: " + ctx.session.getRemoteAddress()
                     , MessageType.INFO); App.getInstance().sessionHashMap.put(ctx.getSessionId(), ctx.session);
                         App.getInstance().sessions1.add(ctx.getSessionId());
-                        ctx.send("Hi was geht"); sessionctx.put(ctx.getSessionId(), ctx); });
+                        ctx.send("Client connects.."); sessionctx.put(ctx.getSessionId(), ctx);
+            });
             ws.onClose(ctx -> { Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId() + ")"
                     , MessageType.INFO); App.getInstance().sessionHashMap.remove(ctx.getSessionId());
                         App.getInstance().sessions1.remove(ctx.getSessionId());
                         sessionctx.remove(ctx.getSessionId());});
-        });
-
-        app.post("/upload-example", ctx -> {
-            ctx.uploadedFiles("files").forEach(file -> {
-                FileUtil.streamToFile(file.getContent(), "upload/" + file.getFilename());
+            ws.onError(ctx -> { Console.printout("Websocket Error", MessageType.ERROR);
+                ctx.send("ERROR");
             });
-            ctx.html("Deine Datei wurde erfolgreich hochgeladen!");
         });
 
-
+        app.get("/testpage", ctx -> {
+            ctx.render("/public/index.html");
+        });
 
         Console.printout("Connecting to BytePhil.de ...", MessageType.INFO);
 

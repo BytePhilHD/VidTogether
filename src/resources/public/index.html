@@ -26,7 +26,9 @@
         <section class="clean-block clean-hero" style="background-image:url(&quot;assets/img/tech/image4.jpg&quot;);color:rgba(9, 162, 255, 0.85);">
             <div class="text">
                 <h2>TestWebsite - UploadServer.jar</h2>
-                <p>Testing some things...</p><p id="webanswer"></p><button class="btn btn-outline-light btn-lg" type="button">Learn More</button></div>
+                <p>Testing some things...</p><p id="webanswer"></p>
+                <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button>
+            </div>
         </section>
     </main>
     <script src="assets/js/jquery.min.js"></script>
@@ -48,20 +50,11 @@
             textAnswer.innerHTML = messageEvent.data;
         }
         ws.onerror = event => {
-            textAnswer.innerHTML = 'error';
+            textAnswer.innerHTML = 'Error - Server offline';
         }
         ws.onclose = closeEvent => {
             console.log('connection closed');
             setupWebSocket();
-        }
-
-        //Send message on pressing return
-        textQuery.onkeydown = key =>
-        {
-            if(key.keyCode === 13) {
-                ws.send(textQuery.value);
-                textQuery.value = '';
-            }
         }
     }
 </script>
