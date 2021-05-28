@@ -4,6 +4,8 @@ import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
 import utils.ConfigService;
+import utils.Console;
+import utils.MessageType;
 import utils.UpdateConnection;
 
 import java.io.BufferedReader;
@@ -21,7 +23,7 @@ public class App {
     public static App getInstance() {
         return instance;
     }
-    public String version = "0.0.1";
+    public String version = "0.0.2";
 
     public App() {
         instance = this;
@@ -46,20 +48,20 @@ public class App {
             ctx.html("Deine Datei wurde erfolgreich hochgeladen!");
         });
 
-        System.out.println("Connecting to BytePhil.de ...");
+        Console.printout("Connecting to BytePhil.de ...", MessageType.INFO);
 
         try {
             updateConnection.connect("https://bytephil.de/lib/UploadServer/rest.json");
 
             if (updateConnection.isMaintenance()) {
-                System.out.println("Database is currently in maintenance!");
+                Console.printout("Database is currently in maintenance!", MessageType.ERROR);
                 return;
             }
         } catch (Exception ex) {
-            System.out.println("Server connection failed!");
+            Console.printout("Server connection failed!", MessageType.ERROR);
         }
 
-        System.out.println("Successfully connected.");
+        Console.printout("Successfully connected.", MessageType.INFO);
 
 
     {
@@ -67,10 +69,13 @@ public class App {
             if (!updateConnection.latestIsBeta()) {
                 downloader.download();
             } else {
-                System.out.println("You aren't up to date. Please download the latest version.");
+                Console.printout("You aren't up to date. Please download the latest version.", MessageType.WARNING);
             }
+        } else {
+            Console.printout("Your running on the latest Version! (" + version + ")", MessageType.INFO);
         }
     }
+        System.out.println("");
         input(app);
     }
 
@@ -82,7 +87,7 @@ public class App {
         switch (input) {
             case "exit":
             case "stop": {
-                System.out.println("PROGRAM WILL EXIT");
+                Console.printout("PROGRAM WILL EXIT", MessageType.WARNING);
                 System.exit(1);
             }
             case "help": {
@@ -91,7 +96,7 @@ public class App {
                 System.out.println(" Show help » help");
             } case "stopweb": {
                 app.stop();
-                System.out.println("WebServer wurde gestoppt!");
+                System.out.println("The Webserver will be stopped!");
             }
         }
     }

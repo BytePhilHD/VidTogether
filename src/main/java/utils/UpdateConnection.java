@@ -38,7 +38,6 @@ public class UpdateConnection {
         final String current = App.getInstance().version;
 
         if (current.compareTo(version) > 0) {
-            System.out.println("Latest Version installed!");
             return true;
         }
         else
