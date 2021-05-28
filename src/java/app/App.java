@@ -3,9 +3,7 @@ package app;
 import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 import org.eclipse.jetty.websocket.api.Session;
-import utils.ConfigService;
 import utils.Console;
 import utils.MessageType;
 import utils.UpdateConnection;
@@ -13,7 +11,6 @@ import utils.UpdateConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,9 +39,9 @@ public class App {
     }
 
     public void start() throws IOException {
-        Javalin app = Javalin.create().start(70);
-
-        app.get("/", App::renderHelloPage);
+        Javalin app = Javalin.create(config -> {
+            config.addStaticFiles("/public");
+        }).start(70);
 
         app.ws("/websockets", ws -> {
             ws.onConnect(ctx -> {
@@ -132,6 +129,6 @@ public class App {
             HelloPage page = new HelloPage();
             page.userName = "admin";
             page.userpassword = "admin234";
-            ctx.render("startpage.jte", Collections.singletonMap("page", page));
+            ctx.render("startpage.html", Collections.singletonMap("page", page));
     }
 }
