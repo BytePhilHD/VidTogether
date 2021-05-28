@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="WebTest:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/WebTest_jar</output-path>
+  <artifact type="jar" build-on-make="true" name="UploadServer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/UploadServer_jar</output-path>
     <root id="archive" name="WebTest.jar">
       <element id="module-output" name="WebTest" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-http/9.4.39.v20210325/jetty-http-9.4.39.v20210325.jar" path-in-jar="/" />

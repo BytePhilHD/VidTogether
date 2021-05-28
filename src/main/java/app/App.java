@@ -14,8 +14,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class App {
 
@@ -30,6 +32,7 @@ public class App {
     public String version = "0.0.2";
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
+    public List<String> sessions = new ArrayList<>();
 
     public App() {
         instance = this;
@@ -44,11 +47,13 @@ public class App {
         app.get("/", App::renderHelloPage);
 
         app.ws("/websockets", ws -> {
-            ws.onConnect(ctx -> Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: "
-                    + ctx.session.getLocalAddress()
-                    , MessageType.INFO ));
-            ws.onClose(ctx -> Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId()
-                    , MessageType.INFO));
+            ws.onConnect(ctx -> {
+                Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: " + ctx.session.getRemoteAddress()
+                    , MessageType.INFO); App.getInstance().sessionHashMap.put(ctx.getSessionId(), ctx.session);
+                        App.getInstance().sessions.add(ctx.getSessionId()); });
+            ws.onClose(ctx -> { Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId() + ")"
+                    , MessageType.INFO); App.getInstance().sessionHashMap.remove(ctx.getSessionId());
+                        App.getInstance().sessions.remove(ctx.getSessionId()); });
         });
 
         app.post("/upload-example", ctx -> {
@@ -110,7 +115,16 @@ public class App {
             } case "stopweb": {
                 app.stop();
                 System.out.println("The Webserver will be stopped!");
+            } case "list": {
+                Console.printout("All Connected Clients", MessageType.INFO);
+                for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
+                    String sessionid = App.getInstance().sessions.get(i);
+                    Session session = App.getInstance().sessionHashMap.get(sessionid);
+                    Console.printout(sessionid + " | IP: " + session.getRemoteAddress(), MessageType.INFO);
+                }
+                App.input(app);
             }
+            App.input(app);
         }
     }
 
