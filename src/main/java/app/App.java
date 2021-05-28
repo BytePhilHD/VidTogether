@@ -3,6 +3,8 @@ package app;
 import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
+import utils.ConfigService;
+import utils.UpdateConnection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,10 +12,32 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 
 public class App {
-    public static void main(String[] args) throws IOException {
+
+    private static App instance;
+
+    private final UpdateConnection updateConnection;
+    private final UpdateConnection.Downloader downloader;
+
+    public static App getInstance() {
+        return instance;
+    }
+    public String version = "0.0.1";
+
+    public App() {
+        instance = this;
+
+        this.updateConnection = new UpdateConnection();
+        this.downloader = new UpdateConnection.Downloader(updateConnection);
+    }
+
+    public void start() throws IOException {
         Javalin app = Javalin.create().start(70);
 
         app.get("/", App::renderHelloPage);
+
+        app.ws("ws://localhost:70/websocket", ws -> {
+            ws.onConnect(ctx -> System.out.println("Connected"));
+        });
 
         app.post("/upload-example", ctx -> {
             ctx.uploadedFiles("files").forEach(file -> {
@@ -21,6 +45,32 @@ public class App {
             });
             ctx.html("Deine Datei wurde erfolgreich hochgeladen!");
         });
+
+        System.out.println("Connecting to BytePhil.de ...");
+
+        try {
+            updateConnection.connect("https://bytephil.de/lib/UploadServer/rest.json");
+
+            if (updateConnection.isMaintenance()) {
+                System.out.println("Database is currently in maintenance!");
+                return;
+            }
+        } catch (Exception ex) {
+            System.out.println("Server connection failed!");
+        }
+
+        System.out.println("Successfully connected.");
+
+
+    {
+        if (!updateConnection.isLatest()) {
+            if (!updateConnection.latestIsBeta()) {
+                downloader.download();
+            } else {
+                System.out.println("You aren't up to date. Please download the latest version.");
+            }
+        }
+    }
         input(app);
     }
 
