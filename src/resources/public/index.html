@@ -1,13 +1,70 @@
-<html lang="en">
-<meta charset="UTF-8">
+<!DOCTYPE html>
+<html>
+
 <head>
-    <h1> WebSocket Test Page </h1>
-    <script>
-        ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websockets");
-    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home - BytePhil.de</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="assets/css/smoothproducts.css">
 </head>
+
 <body>
-<p>Hallöle</p>
-<p>Hier kannst du was hochladen! </p>
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+        <div class="container"><a class="navbar-brand logo" href="#">BytePhil.de</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="index.html">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="page landing-page">
+        <section class="clean-block clean-hero" style="background-image:url(&quot;assets/img/tech/image4.jpg&quot;);color:rgba(9, 162, 255, 0.85);">
+            <div class="text">
+                <h2>TestWebsite - UploadServer.jar</h2>
+                <p>Testing some things...</p><p id="webanswer"></p><button class="btn btn-outline-light btn-lg" type="button">Learn More</button></div>
+        </section>
+    </main>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    <script src="assets/js/smoothproducts.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script>
+    window.onload = setupWebSocket;
+    function setupWebSocket() {
+        const textQuery = document.querySelector("#query");
+        const textAnswer = document.querySelector("#webanswer");
+        const ws = new WebSocket("ws://" + location.hostname +  ":70/websockets");
+        ws.onopen = event => {
+            console.log('connection established');
+        }
+        ws.onmessage = messageEvent => {
+            textAnswer.innerHTML = messageEvent.data;
+        }
+        ws.onerror = event => {
+            textAnswer.innerHTML = 'error';
+        }
+        ws.onclose = closeEvent => {
+            console.log('connection closed');
+            setupWebSocket();
+        }
+
+        //Send message on pressing return
+        textQuery.onkeydown = key =>
+        {
+            if(key.keyCode === 13) {
+                ws.send(textQuery.value);
+                textQuery.value = '';
+            }
+        }
+    }
+</script>
 </body>
+
 </html>

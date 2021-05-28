@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TestServer</title>
+</head>
+<body>
+
+<p>---</p>
+<p>Hallöle</p>
+<p>Das is eine TestSeite! </p>
+<p>Antwort: </p><p id="webanswer"></p>
+
+<script>
+    window.onload = setupWebSocket;
+    function setupWebSocket() {
+        const textQuery = document.querySelector("#query");
+        const textAnswer = document.querySelector("#webanswer");
+        const ws = new WebSocket("ws://" + location.hostname +  ":70/websockets");
+        ws.onopen = event => {
+            console.log('connection established');
+        }
+        ws.onmessage = messageEvent => {
+            textAnswer.innerHTML = messageEvent.data;
+        }
+        ws.onerror = event => {
+            textAnswer.innerHTML = 'error';
+        }
+        ws.onclose = closeEvent => {
+            console.log('connection closed');
+            setupWebSocket();
+        }
+
+        //Send message on pressing return
+        textQuery.onkeydown = key =>
+        {
+            if(key.keyCode === 13) {
+                ws.send(textQuery.value);
+                textQuery.value = '';
+            }
+        }
+    }
+</script>
+</body>
+</html>

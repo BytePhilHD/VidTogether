@@ -1,18 +1,20 @@
-@param app.HelloPage page
-
 <html lang="en">
 <meta charset="UTF-8">
 <head>
-    <p> Aaa </p>
+    <h1> WebSocket Test Page </h1>
     <script>
+        const textAnswer = document.querySelector("#webanswer");
         ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websockets");
+        ws.onmessage = messageEvent => {
+            textAnswer.value = messageEvent.data;
+        }
+
     </script>
 </head>
 <body>
+<p>TextAnswer? textAnswer</p>
 <p>Hallöle</p>
 <p>Hier kannst du was hochladen! </p>
-<p>Aktuelle Uhrzeit: <b>${page.getTime()}</b></p>
-
 <h1>Upload example</h1>
 <form method="post" action="/upload-example" enctype="multipart/form-data">
     <input type="file" name="files" multiple>
@@ -20,7 +22,3 @@
 </form>
 </body>
 </html>
-
-
-
-
