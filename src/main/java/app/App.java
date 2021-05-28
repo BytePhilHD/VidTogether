@@ -3,6 +3,7 @@ package app;
 import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 import utils.ConfigService;
 import utils.Console;
 import utils.MessageType;
@@ -11,6 +12,7 @@ import utils.UpdateConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.Collections;
 
 public class App {
@@ -37,9 +39,10 @@ public class App {
 
         app.get("/", App::renderHelloPage);
 
-        app.ws("ws://localhost:70/startpage.jte", ws -> {
+        app.ws("/websockets", ws -> {
             ws.onConnect(a -> System.out.println("Connected"));
         });
+
 
         app.post("/upload-example", ctx -> {
             ctx.uploadedFiles("files").forEach(file -> {
@@ -96,6 +99,7 @@ public class App {
                 System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
                 System.out.println(" Stop Program » exit");
                 System.out.println(" Show help » help");
+                App.input(app);
             } case "stopweb": {
                 app.stop();
                 System.out.println("The Webserver will be stopped!");

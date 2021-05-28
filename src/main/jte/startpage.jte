@@ -1,9 +1,17 @@
 @param app.HelloPage page
 
 <html lang="en">
+<meta charset="UTF-8">
+<head>
+    <script>
+        ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websockets");
+        ws.close();
+    </script>
+</head>
 <body>
-<p>Hello visitor!</p>
-<p>The <b>user of the day</b> is ${page.userName} </p>
+<p>Hallöle</p>
+<p>Hier kannst du was hochladen! </p>
+<p>Aktuelle Uhrzeit: <b>${page.getTime()}</b></p>
 
 <h1>Upload example</h1>
 <form method="post" action="/upload-example" enctype="multipart/form-data">
