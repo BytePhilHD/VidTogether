@@ -37,8 +37,8 @@ public class App {
 
         app.get("/", App::renderHelloPage);
 
-        app.ws("ws://localhost:70/websocket", ws -> {
-            ws.onConnect(ctx -> System.out.println("Connected"));
+        app.ws("ws://localhost:70/startpage.jte", ws -> {
+            ws.onConnect(a -> System.out.println("Connected"));
         });
 
         app.post("/upload-example", ctx -> {
@@ -47,6 +47,8 @@ public class App {
             });
             ctx.html("Deine Datei wurde erfolgreich hochgeladen!");
         });
+
+
 
         Console.printout("Connecting to BytePhil.de ...", MessageType.INFO);
 
