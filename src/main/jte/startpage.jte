@@ -3,9 +3,9 @@
 <html lang="en">
 <meta charset="UTF-8">
 <head>
+    <p> Aaa </p>
     <script>
         ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websockets");
-        ws.close();
     </script>
 </head>
 <body>
@@ -20,3 +20,7 @@
 </form>
 </body>
 </html>
+
+
+
+

@@ -4,6 +4,7 @@ import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import org.eclipse.jetty.websocket.api.Session;
 import utils.ConfigService;
 import utils.Console;
 import utils.MessageType;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class App {
 
@@ -26,6 +28,8 @@ public class App {
         return instance;
     }
     public String version = "0.0.2";
+
+    public HashMap<String, Session> sessionHashMap = new HashMap<>();
 
     public App() {
         instance = this;
@@ -40,9 +44,12 @@ public class App {
         app.get("/", App::renderHelloPage);
 
         app.ws("/websockets", ws -> {
-            ws.onConnect(a -> System.out.println("Connected"));
+            ws.onConnect(ctx -> Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: "
+                    + ctx.session.getLocalAddress()
+                    , MessageType.INFO ));
+            ws.onClose(ctx -> Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId()
+                    , MessageType.INFO));
         });
-
 
         app.post("/upload-example", ctx -> {
             ctx.uploadedFiles("files").forEach(file -> {
