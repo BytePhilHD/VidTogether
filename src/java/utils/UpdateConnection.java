@@ -82,7 +82,8 @@ public class UpdateConnection {
                 final FileOutputStream fileOutputStream = new FileOutputStream(file);
                 final BufferedOutputStream outputStream = new BufferedOutputStream(fileOutputStream, j);
 
-                System.out.println("Starting download...");
+                Console.printout("Youre not on the latest Version!", MessageType.WARNING);
+                Console.printout("Starting download...", MessageType.INFO);
 
                 final byte[] bytes = new byte[j];
                 int read;
@@ -94,10 +95,11 @@ public class UpdateConnection {
                 outputStream.close();
                 inputStream.close();
 
-                System.out.println("Download completed.");
+                Console.printout("Download completed.", MessageType.INFO);
+                Console.printout("Shutting down...", MessageType.WARNING);
                 System.exit(1);
             } catch (Exception ex) {
-                System.out.println("Network error");
+                Console.printout("Network error", MessageType.ERROR);
             }
         }
 

@@ -3,8 +3,10 @@ package app;
 import io.javalin.Javalin;
 import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
+import io.javalin.http.ErrorHandler;
 import io.javalin.plugin.rendering.vue.VueComponent;
 import io.javalin.websocket.WsConnectContext;
+import jline.console.ConsoleReader;
 import org.eclipse.jetty.websocket.api.Session;
 import utils.Console;
 import utils.MessageType;
@@ -47,7 +49,7 @@ public class App {
     public void start() throws IOException {
         Javalin app = Javalin.create(config -> {
             config.addStaticFiles("/public");
-        }).start(70);
+        }).start(80);
         App.app = app;
 
         app.ws("/websockets", ws -> {
@@ -55,7 +57,8 @@ public class App {
                 Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: " + ctx.session.getRemoteAddress()
                     , MessageType.INFO); App.getInstance().sessionHashMap.put(ctx.getSessionId(), ctx.session);
                         App.getInstance().sessions1.add(ctx.getSessionId());
-                        ctx.send("Client connects.."); sessionctx.put(ctx.getSessionId(), ctx);
+                        ctx.send("Client connects..");
+                        sessionctx.put(ctx.getSessionId(), ctx);
             });
             ws.onClose(ctx -> { Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId() + ")"
                     , MessageType.INFO); App.getInstance().sessionHashMap.remove(ctx.getSessionId());
@@ -83,7 +86,7 @@ public class App {
             Console.printout("Server connection failed!", MessageType.ERROR);
         }
 
-        Console.printout("Successfully connected.", MessageType.INFO);
+        Console.printout("Successfully connected to Update Server.", MessageType.INFO);
 
 
     {
@@ -98,30 +101,37 @@ public class App {
         }
     }
         System.out.println("");
-        run();
-        input();
+        //input();
+        thread.run();
     }
-    public void run() throws IOException {
-        // Eine Endlosschleife, die einmal pro Sekunde die Datei öffnet, und ausliest
-        while( true ){
-            for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
-                String sessionid = App.getInstance().sessions1.get(i);
-                WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-            }
-            try {
-                Thread.sleep( 500 );
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    Thread thread=new Thread() {
+        @Override
+        public void run() {
+            while (true) {
+                for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
+                    String sessionid = App.getInstance().sessions1.get(i);
+                    WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }
+    };
 
     private static void input() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        String input = reader.readLine();
+        String input = null;
+        try {
+             input = reader.readLine();
+        } catch (Exception e1) {
+
+        }
 
         switch (input) {
             case "exit":
