@@ -32,6 +32,8 @@ public class App {
     private final UpdateConnection.Downloader downloader;
     private static Javalin app;
 
+    private ConsoleReader reader = new ConsoleReader();
+
     public static App getInstance() {
         return instance;
     }
@@ -44,7 +46,7 @@ public class App {
 
     public ServiceState serviceState = ServiceState.STARTING;
 
-    public App() {
+    public App() throws IOException {
         instance = this;
 
         this.updateConnection = new UpdateConnection();
@@ -111,10 +113,10 @@ public class App {
                 serviceState = ServiceState.ONLINE;
             }
         }
-        Console.empty();
         if (!thread.isAlive()) {
             thread.start();
         }
+        Console.empty();
 
         Console.printout("All Services started! Waiting for Client connection on YourIP:" + app.port(), MessageType.INFO);
         Console.empty();

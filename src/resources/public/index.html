@@ -26,7 +26,7 @@
         <section class="clean-block clean-hero" style="background-image:url(&quot;assets/img/tech/image4.jpg&quot;);color:rgba(9, 162, 255, 0.85);">
             <div class="text">
                 <h2>TestWebsite - UploadServer.jar</h2>
-                <p>Testing some things...</p><p id="webanswer"></p>
+                <p>Hier werden Dinge getestet!</p><p id="webanswer"></p>
                 <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button>
             </div>
         </section>
@@ -46,18 +46,19 @@
         if (location.port != 0) {
             i = location.port;
         }
-        const ws = new WebSocket("ws://" + location.hostname +  ":" + i + "/websockets");
+        const ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
         ws.onopen = event => {
-            console.log('connection established');
+            console.log('Connection to Server established.');
         }
         ws.onmessage = messageEvent => {
             textAnswer.innerHTML = messageEvent.data;
         }
         ws.onerror = event => {
             textAnswer.innerHTML = 'Error - Server offline';
+            console.log('Server Error!');
         }
         ws.onclose = closeEvent => {
-            console.log('connection closed');
+            console.log('Connection to Server closed!');
             setupWebSocket();
         }
     }
