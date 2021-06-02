@@ -28,7 +28,6 @@
                 <h2>TestWebsite - UploadServer.jar</h2>
                 <p>Hier werden Dinge getestet!</p><img id="webanswer"></img>
                 <!-- <p id="webanswer"></p> -->
-                <img id="webanswer"></img>
                 <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button>
             </div>
         </section>
@@ -55,7 +54,7 @@
         }
         ws.onmessage = messageEvent => {
             var imageUrl = urlCreator.createObjectURL(messageEvent.data);
-            textanswer.src = imageUrl;
+            textAnswer.src = imageUrl;
         }
         ws.onerror = event => {
             textAnswer.innerHTML = 'Error - Server offline';

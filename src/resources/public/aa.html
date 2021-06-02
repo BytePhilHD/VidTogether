@@ -9,39 +9,33 @@
 <p>---</p>
 <p>Hallöle</p>
 <p>Das is eine TestSeite! </p>
-<p>Antwort: </p><p id="webanswer"></p>
+<p>Hier werden Dinge getestet!</p><img id="webanswer"></img>
 
 <script>
     window.onload = setupWebSocket;
     function setupWebSocket() {
         const textQuery = document.querySelector("#query");
         const textAnswer = document.querySelector("#webanswer");
-                var i = 80;
+        const urlCreator = window.URL || window.webkitURL;
+        var i = 80;
         if (location.port != 0) {
             i = location.port;
         }
-        const ws = new WebSocket("ws://" + location.hostname +  ":" + i + "/websockets");
+        const ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
         ws.onopen = event => {
-            console.log('connection established');
+            console.log('Connection to Server established.');
         }
         ws.onmessage = messageEvent => {
-            textAnswer.innerHTML = messageEvent.data;
+            var imageUrl = urlCreator.createObjectURL(messageEvent.data);
+            textAnswer.src = imageUrl;
         }
         ws.onerror = event => {
-            textAnswer.innerHTML = 'error';
+            textAnswer.innerHTML = 'Error - Server offline';
+            console.log('Server Error!');
         }
         ws.onclose = closeEvent => {
-            console.log('connection closed');
+            console.log('Connection to Server closed!');
             setupWebSocket();
-        }
-
-        //Send message on pressing return
-        textQuery.onkeydown = key =>
-        {
-            if(key.keyCode === 13) {
-                ws.send(textQuery.value);
-                textQuery.value = '';
-            }
         }
     }
 </script>

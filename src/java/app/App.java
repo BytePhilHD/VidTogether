@@ -1,10 +1,6 @@
 package app;
 
 import io.javalin.Javalin;
-import io.javalin.core.util.FileUtil;
-import io.javalin.http.Context;
-import io.javalin.http.ErrorHandler;
-import io.javalin.plugin.rendering.vue.VueComponent;
 import io.javalin.websocket.WsConnectContext;
 import jline.console.ConsoleReader;
 import org.eclipse.jetty.websocket.api.Session;
@@ -14,16 +10,12 @@ import utils.ServiceState;
 import utils.UpdateConnection;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class App {
 
@@ -43,6 +35,7 @@ public class App {
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
+    public HashMap<Integer, ByteBuffer> byteBufferHashMap = new HashMap<>();
     public List<String> sessions1 = new ArrayList<>();
 
     public ServiceState serviceState = ServiceState.STARTING;
@@ -117,6 +110,8 @@ public class App {
         if (!thread.isAlive()) {
             thread.start();
         }
+        Console.printout("Prerendering all Pictures...", MessageType.INFO);
+        loadPics();
         Console.empty();
 
         Console.printout("All Services started! Waiting for Client connection on YourIP:" + app.port(), MessageType.INFO);
@@ -128,30 +123,24 @@ public class App {
     public Thread thread = new Thread() {
         @Override
         public void run() {
+            int u = 1;
             while (thread.isAlive()) {
                 for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
+                    BufferedImage originalImage = null;
+                    try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/scenery/image1.jpg"));
+                    } catch (IOException e) { e.printStackTrace(); }
                     String sessionid = App.getInstance().sessions1.get(i);
                     WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                     //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-
-                    try {
-                        BufferedImage originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/scenery/image1.jpg"));
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        ImageIO.write(originalImage, "jpg", baos);
-                        baos.flush();
-                        byte[] imageInByte = baos.toByteArray();
-                        baos.close();
-                        ByteBuffer buf = ByteBuffer.wrap(imageInByte);
-                        session.send(buf);
-                    } catch(Exception e1) {
-                        Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
-                        Console.printout("Stopped Update-Thread because of an Error!", MessageType.WARNING);
-                        thread.stop();
+                    if (u == 12) {
+                        u = 0;
+                    } else {
+                        session.send(byteBufferHashMap.get(u));
                     }
                 }
                 try {
-                    thread.sleep(500);
+                    thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -159,6 +148,25 @@ public class App {
         }
     };
 
+    public void loadPics() {
+        BufferedImage originalImage = null;
+        for (int i = 1; i < 11; i++) {
+            try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/stopmotion/" + i + "JPG.jpg"));
+            } catch (IOException e) { e.printStackTrace(); }
+
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(originalImage, "jpg", baos);
+                baos.flush();
+                byte[] imageInByte = baos.toByteArray();
+                baos.close();
+                ByteBuffer buf = ByteBuffer.wrap(imageInByte);
+                byteBufferHashMap.put(i, buf);
+            } catch(Exception e1) {
+                Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
+            }
+        }
+    }
         private static void input() throws IOException {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
