@@ -28,6 +28,7 @@
                 <h2>TestWebsite - UploadServer.jar</h2>
                 <p>Hier werden Dinge getestet!</p><img id="webanswer"></img>
                 <!-- <p id="webanswer"></p> -->
+                <img id="webanswer"></img>
                 <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button>
             </div>
         </section>
@@ -43,6 +44,7 @@
     function setupWebSocket() {
         const textQuery = document.querySelector("#query");
         const textAnswer = document.querySelector("#webanswer");
+        const urlCreator = window.URL || window.webkitURL;
         var i = 80;
         if (location.port != 0) {
             i = location.port;
@@ -52,7 +54,8 @@
             console.log('Connection to Server established.');
         }
         ws.onmessage = messageEvent => {
-            textAnswer.innerHTML = messageEvent.data;
+            var imageUrl = urlCreator.createObjectURL(messageEvent.data);
+            textanswer.src = imageUrl;
         }
         ws.onerror = event => {
             textAnswer.innerHTML = 'Error - Server offline';
