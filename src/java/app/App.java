@@ -13,10 +13,11 @@ import utils.MessageType;
 import utils.ServiceState;
 import utils.UpdateConnection;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -132,7 +133,21 @@ public class App {
                     String sessionid = App.getInstance().sessions1.get(i);
                     WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                    session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                    //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+
+                    try {
+                        BufferedImage originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/scenery/image1.jpg"));
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        ImageIO.write(originalImage, "jpg", baos);
+                        baos.flush();
+                        byte[] imageInByte = baos.toByteArray();
+                        baos.close();
+                        ByteBuffer buf = ByteBuffer.wrap(imageInByte);
+                        session.send(buf);
+                    } catch(Exception e1) {
+                        Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
+                        thread.stop();
+                    }
                 }
                 try {
                     thread.sleep(500);
