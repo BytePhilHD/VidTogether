@@ -146,6 +146,7 @@ public class App {
                         session.send(buf);
                     } catch(Exception e1) {
                         Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
+                        Console.printout("Stopped Update-Thread because of an Error!", MessageType.WARNING);
                         thread.stop();
                     }
                 }
