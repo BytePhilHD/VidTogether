@@ -10,7 +10,6 @@ import utils.ServiceState;
 import utils.UpdateConnection;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -35,7 +34,7 @@ public class App {
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
-    public HashMap<Integer, ByteBuffer> byteBufferHashMap = new HashMap<>();
+    public HashMap<Integer, byte[]> cachedImages = new HashMap<>();
     public List<String> sessions1 = new ArrayList<>();
 
     public ServiceState serviceState = ServiceState.STARTING;
@@ -107,11 +106,12 @@ public class App {
                 serviceState = ServiceState.ONLINE;
             }
         }
-        if (!thread.isAlive()) {
-            thread.start();
-        }
         Console.printout("Prerendering all Pictures...", MessageType.INFO);
         loadPics();
+
+        if (!thread.isAlive()) {
+           thread.start();
+        }
         Console.empty();
 
         Console.printout("All Services started! Waiting for Client connection on YourIP:" + app.port(), MessageType.INFO);
@@ -125,18 +125,15 @@ public class App {
         public void run() {
             int u = 1;
             while (thread.isAlive()) {
+                if (u==11) u=1; else u++;
+
                 for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
                     String sessionid = App.getInstance().sessions1.get(i);
                     WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    ByteBuffer buf = ByteBuffer.wrap(cachedImages.get(u));
+                    session.send(buf);
                     //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                    if (u == 11) {
-                        session.send(byteBufferHashMap.get(u));
-                        u = 1;
-                    } else {
-                        session.send(byteBufferHashMap.get(u));
-                        u++;
-                    }
                 }
                 try {
                     thread.sleep(200);
@@ -159,8 +156,7 @@ public class App {
                 baos.flush();
                 byte[] imageInByte = baos.toByteArray();
                 baos.close();
-                ByteBuffer buf = ByteBuffer.wrap(imageInByte);
-                byteBufferHashMap.put(i, buf);
+                cachedImages.put(i, imageInByte);
             } catch(Exception e1) {
                 Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
             }
