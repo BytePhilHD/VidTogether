@@ -126,17 +126,16 @@ public class App {
             int u = 1;
             while (thread.isAlive()) {
                 for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
-                    BufferedImage originalImage = null;
-                    try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/scenery/image1.jpg"));
-                    } catch (IOException e) { e.printStackTrace(); }
                     String sessionid = App.getInstance().sessions1.get(i);
                     WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                     //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                    if (u == 12) {
-                        u = 0;
+                    if (u == 11) {
+                        session.send(byteBufferHashMap.get(u));
+                        u = 1;
                     } else {
                         session.send(byteBufferHashMap.get(u));
+                        u++;
                     }
                 }
                 try {
@@ -150,7 +149,7 @@ public class App {
 
     public void loadPics() {
         BufferedImage originalImage = null;
-        for (int i = 1; i < 11; i++) {
+        for (int i = 1; i < 12; i++) {
             try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/stopmotion/" + i + "JPG.jpg"));
             } catch (IOException e) { e.printStackTrace(); }
 
