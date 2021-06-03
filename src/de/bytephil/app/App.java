@@ -109,6 +109,8 @@ public class App {
                     App.getInstance().sessions1.add(ctx.getSessionId());
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
+                    ByteBuffer buf = ByteBuffer.wrap(convert("/Files/TEST.MP4"));
+                    ctx.send(buf);
                 }
             });
             ws.onClose(ctx -> {
@@ -161,7 +163,7 @@ public class App {
         loadPics();
 
         if (!thread.isAlive()) {
-           thread.start();
+           //thread.start();
         }
         Console.empty();
 
@@ -199,6 +201,7 @@ public class App {
     };
 
     public void loadPics() throws IOException {
+
         BufferedImage originalImage = null;
         for (int i = 1; i < 12; i++) {
             try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/stopmotion/" + i + "JPG.jpg"));
@@ -215,6 +218,21 @@ public class App {
                 Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
             }
         }
+    }
+
+    public byte[] convert(String path) throws IOException {
+
+        FileInputStream fis = new FileInputStream(path);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] b = new byte[1024];
+
+        for (int readNum; (readNum = fis.read(b)) != -1;) {
+            bos.write(b, 0, readNum);
+        }
+
+        byte[] bytes = bos.toByteArray();
+
+        return bytes;
     }
 
 
