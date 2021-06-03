@@ -1,8 +1,15 @@
-<h2>Currently the Project is just for testing out some features of Javalin Websockets. </h2>
+<h2>Watch your own Videos together </h2>
 
- **In the near future there may be a deeper sense about this Project :)**
+ **Host your own Site for watching mp4 Videos with others!**
  
- The main Page for seeing the current stand of Development is [s2.bytephil.de](https://s2.bytephil.de)
+ The main Page for testing is [s2.bytephil.de](https://s2.bytephil.de)
  
- Newest release:
-[Releases](https://github.com/BytePhilHD/UploadServer/releases)
+<h3>Features</h3>
+- [ ] Password protected Rooms
+- [ ] Video Playback
+- [ ] Video Pause Function
+- [ ] Room Chat
+
+<h1>How to install</h1>
+Download the newest Version from 
+
