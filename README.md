@@ -6,8 +6,9 @@
  
 <h3>Features</h3>
 
+- [x] Config
+- [x] Load Videos from Files Folder and play them to all Clients
 - [ ] Password protected Rooms
-- [ ] Video Playback
 - [ ] Video Pause Function
 - [ ] Room Chat
 

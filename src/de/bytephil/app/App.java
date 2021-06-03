@@ -122,7 +122,7 @@ public class App {
                     App.getInstance().sessions1.add(ctx.getSessionId());
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
-                    ByteBuffer buf = ByteBuffer.wrap(convert("Files/TEST.MP4"));
+                    ByteBuffer buf = ByteBuffer.wrap(convert("Files/Example.mp4")); //TODO Change this! If user has deleted it
                     ctx.send(buf);
                 }
             });
@@ -242,7 +242,7 @@ public class App {
             Console.printout(e1.getMessage(), MessageType.ERROR);
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] b = new byte[1024];
+        byte[] b = new byte[4096];
 
         for (int readNum; (readNum = fis.read(b)) != -1;) {
             bos.write(b, 0, readNum);
