@@ -128,32 +128,35 @@ public class App {
             ctx.render("/public/index.html");
         });
 
-        Console.printout("Connecting to BytePhil.de ...", MessageType.INFO);
+        if (config.autoUpdate) {
+            Console.printout("Connecting to BytePhil.de ...", MessageType.INFO);
 
-        try {
-            updateConnection.connect("https://bytephil.de/lib/UploadServer/rest.json");
+            try {
+                updateConnection.connect("https://bytephil.de/lib/UploadServer/rest.json");
 
-            if (updateConnection.isMaintenance()) {
-                Console.printout("Database is currently in maintenance!", MessageType.ERROR);
-                return;
-            }
-            Console.printout("Successfully connected to Update Server.", MessageType.INFO);
-        } catch (Exception ex) {
-            Console.printout("Server connection failed!", MessageType.ERROR);
-        }
-
-        {
-            if (!updateConnection.isLatest()) {
-                if (!updateConnection.latestIsBeta()) {
-                    downloader.download();
-                } else {
-                    Console.printout("You aren't up to date. Please download the latest version.", MessageType.WARNING);
+                if (updateConnection.isMaintenance()) {
+                    Console.printout("Database is currently in maintenance!", MessageType.ERROR);
+                    return;
                 }
-            } else {
-                Console.printout("Your running on the latest Version! (" + version + ")", MessageType.INFO);
-                serviceState = ServiceState.ONLINE;
+                Console.printout("Successfully connected to Update Server.", MessageType.INFO);
+            } catch (Exception ex) {
+                Console.printout("Server connection failed!", MessageType.ERROR);
+            }
+
+            {
+                if (!updateConnection.isLatest()) {
+                    if (!updateConnection.latestIsBeta()) {
+                        downloader.download();
+                    } else {
+                        Console.printout("You aren't up to date. Please download the latest version.", MessageType.WARNING);
+                    }
+                } else {
+                    Console.printout("Your running on the latest Version! (" + version + ")", MessageType.INFO);
+                    serviceState = ServiceState.ONLINE;
+                }
             }
         }
+
         Console.printout("Prerendering all Pictures...", MessageType.INFO);
         loadPics();
 
