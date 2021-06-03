@@ -59,7 +59,6 @@ public class App {
 
         if (!new File("server.config").exists()) {
             de.bytephil.utils.Console.printout("The config file is missing!", MessageType.WARNING);
-            return;
         }
 
         // Load config
