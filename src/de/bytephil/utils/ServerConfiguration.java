@@ -20,7 +20,7 @@ public class ServerConfiguration extends Config {
         }
         try {
             prop.load(is);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Console.printout("Couldn't read config file", MessageType.WARNING);
             loaded = false;
         }
