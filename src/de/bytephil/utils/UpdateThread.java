@@ -3,7 +3,6 @@ package de.bytephil.utils;
 import de.bytephil.app.App;
 import io.javalin.websocket.WsConnectContext;
 
-import java.nio.ByteBuffer;
 import java.time.format.DateTimeFormatter;
 
 public class UpdateThread {
@@ -16,7 +15,7 @@ public class UpdateThread {
                 if (u==11) u=1; else u++;
 
                 for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
-                    String sessionid = App.getInstance().sessions1.get(i);
+                    String sessionid = App.getInstance().sessions.get(i);
                     WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                     //ByteBuffer buf = ByteBuffer.wrap(cachedImages.get(u));

@@ -2,13 +2,11 @@ package de.bytephil.utils;
 
 import de.bytephil.app.App;
 import io.javalin.websocket.WsConnectContext;
-import jline.console.ConsoleReader;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -49,7 +47,7 @@ public class Console {
                         App.getInstance().currentPlaying = fileName;
 
                         for (int i = 0; i < clients; i++) {
-                            String sessionid = App.getInstance().sessions1.get(i);
+                            String sessionid = App.getInstance().sessions.get(i);
                             WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                             session.send(buf);
@@ -74,7 +72,7 @@ public class Console {
                 case "list": {
                     Console.printout("All Connected Clients", MessageType.INFO);
                     for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
-                        String sessionid = App.getInstance().sessions1.get(i);
+                        String sessionid = App.getInstance().sessions.get(i);
                         Session session = App.getInstance().sessionHashMap.get(sessionid);
                         Console.printout(sessionid + " | IP: " + session.getRemoteAddress(), MessageType.INFO);
                     }

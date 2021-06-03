@@ -11,11 +11,8 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.api.Session;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class App {
@@ -41,7 +38,7 @@ public class App {
     public HashMap<Integer, byte[]> cachedImages = new HashMap<>();
     public HashMap<String, byte[]> converted = new HashMap<>();
     public List<Integer> convertedList = new ArrayList<>();
-    public List<String> sessions1 = new ArrayList<>();
+    public List<String> sessions = new ArrayList<>();
     public String currentPlaying = null;
 
     public boolean showProcesses = false;
@@ -55,19 +52,10 @@ public class App {
         this.downloader = new UpdateConnection.Downloader(updateConnection);
     }
 
-    public void copyFile(File newFile, String existingFile) throws IOException {
-        newFile.createNewFile();
-        final FileOutputStream configOutputStream = new FileOutputStream(newFile);
-        byte[] buffer = new byte[4096];
-        final InputStream defaultConfStream = getClass().getClassLoader().getResourceAsStream(existingFile);
-        int readBytes;
-        while ((readBytes = defaultConfStream.read(buffer)) > 0) {
-            configOutputStream.write(buffer, 0, readBytes);
-        }
-        defaultConfStream.close();
-    }
 
     public void start() throws IOException {
+
+        boolean firstStart = false;
 
         if (!new File("server.config").exists()) {
             de.bytephil.utils.Console.printout("The config file is missing! Creating default one.", MessageType.WARNING);
@@ -81,8 +69,8 @@ public class App {
             final File newFile2 = new File("Files/Example.mp4");
             copyFile(newFile2, "Example.mp4");
             copyFile(newFile, "Help.yml");
+            firstStart = true;
         }
-
 
         // Load config
         config = new ServerConfiguration("server.config");
@@ -110,33 +98,31 @@ public class App {
                 server.setConnectors(connectors.toArray(new Connector[0]));
                 return server;
             });
-        } ).start();
+        }).start();
         App.app = app;
 
         app.ws("/wsinfo", ws -> {
             ws.onConnect(ctx -> {
                 if (currentPlaying == null) {
                     ctx.send("Welcome, currently theres nothing playing!");
-                }
-                else {
-                    ctx.send("Welcome, currently theres playing " + currentPlaying);
+                } else {
+                    ctx.send("Welcome, currently theres playing " + currentPlaying.replace(".mp4", ""));
                 }
             });
-                    });
+        });
         app.ws("/websockets", ws -> {
             ws.onConnect(ctx -> {
                 if (serviceState == ServiceState.ONLINE) {
                     Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: " + ctx.session.getRemoteAddress()
                             , MessageType.INFO);
                     App.getInstance().sessionHashMap.put(ctx.getSessionId(), ctx.session);
-                    App.getInstance().sessions1.add(ctx.getSessionId());
+                    App.getInstance().sessions.add(ctx.getSessionId());
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
                     if (currentPlaying != null) {
                         ByteBuffer buf = ByteBuffer.wrap(converted.get(currentPlaying));
                         ctx.send(buf);
-                    }
-                    else {
+                    } else {
                         ctx.send("No Video is playing.");
                     }
                 }
@@ -145,7 +131,7 @@ public class App {
                 Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId() + ")"
                         , MessageType.INFO);
                 App.getInstance().sessionHashMap.remove(ctx.getSessionId());
-                App.getInstance().sessions1.remove(ctx.getSessionId());
+                App.getInstance().sessions.remove(ctx.getSessionId());
                 sessionctx.remove(ctx.getSessionId());
             });
             ws.onError(ctx -> {
@@ -187,33 +173,48 @@ public class App {
             }
         }
 
-       // Console.printout("Prerendering all Pictures...", MessageType.INFO);
-       // loadPics();
+        // Console.printout("Prerendering all Pictures...", MessageType.INFO);
+        // loadPics();
 
         Thread thread = UpdateThread.thread;
         if (!thread.isAlive()) {
-           //thread.start();
+            //thread.start();
         }
         Console.empty();
 
         Console.printout("All Services started! Waiting for Client connection on YourIP:" + app.port(), MessageType.INFO);
         Console.empty();
-
+        if (firstStart) {
+            Console.printout("It seems like you're running VidTogether for the first time!", MessageType.WARNING);
+            Console.printout("For Help look into your Files Folder or on our GitHub Page!", MessageType.WARNING);
+            Console.empty(); Console.empty(); Console.empty();
+        }
         Console.input();
     }
 
-
-
-        public static void shutdown() {
-            App.getInstance().serviceState = ServiceState.STOPPING;
-            Console.printout("System is stopping!", MessageType.ERROR);
-            app.stop();
-            System.exit(0);
+    public void copyFile(File newFile, String existingFile) throws IOException {
+        newFile.createNewFile();
+        final FileOutputStream configOutputStream = new FileOutputStream(newFile);
+        byte[] buffer = new byte[4096];
+        final InputStream defaultConfStream = getClass().getClassLoader().getResourceAsStream(existingFile);
+        int readBytes;
+        while ((readBytes = defaultConfStream.read(buffer)) > 0) {
+            configOutputStream.write(buffer, 0, readBytes);
         }
-        private SslContextFactory getSslContextFactory() {
-            SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStorePath(config.keystorePath);
-            sslContextFactory.setKeyStorePassword(config.keystorePW);
-            return sslContextFactory;
-        }
+        defaultConfStream.close();
     }
+
+    public static void shutdown() {
+        App.getInstance().serviceState = ServiceState.STOPPING;
+        Console.printout("System is stopping!", MessageType.ERROR);
+        app.stop();
+        System.exit(0);
+    }
+
+    private SslContextFactory getSslContextFactory() {
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setKeyStorePath(config.keystorePath);
+        sslContextFactory.setKeyStorePassword(config.keystorePW);
+        return sslContextFactory;
+    }
+}
