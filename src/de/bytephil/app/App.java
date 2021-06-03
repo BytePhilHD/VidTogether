@@ -37,7 +37,7 @@ public class App {
         return instance;
     }
 
-    public String version = "0.0.3";
+    public String version = "0.0.4";
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
