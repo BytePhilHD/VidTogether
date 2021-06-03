@@ -1,3 +1,7 @@
-This File is for Help with the Files Folder Function
+How to use:
 
-Coming soon...
+Load your .mp4 Files into the Files Folder.
+
+Then go to your Console and type "load [filename]" (e.g. "Example.mp4").
+
+Now the Video is loading and then sended to all connected Clients (via Webbrowser).

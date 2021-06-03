@@ -42,6 +42,8 @@ public class App {
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
     public HashMap<Integer, byte[]> cachedImages = new HashMap<>();
+    public HashMap<String, byte[]> converted = new HashMap<>();
+    public List<Integer> convertedList = new ArrayList<>();
     public List<String> sessions1 = new ArrayList<>();
 
     public boolean showProcesses = false;
@@ -122,8 +124,8 @@ public class App {
                     App.getInstance().sessions1.add(ctx.getSessionId());
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
-                    ByteBuffer buf = ByteBuffer.wrap(convert("Files/Example.mp4")); //TODO Change this! If user has deleted it
-                    ctx.send(buf);
+                   // ByteBuffer buf = ByteBuffer.wrap(convert("Files/Example.mp4")); //TODO Change this! If user has deleted it
+                    //ctx.send(buf);
                 }
             });
             ws.onClose(ctx -> {
@@ -232,28 +234,6 @@ public class App {
             }
         }
     }
-
-    public byte[] convert(String path) throws IOException {
-
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(path);
-        } catch (Exception e1) {
-            Console.printout(e1.getMessage(), MessageType.ERROR);
-        }
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] b = new byte[4096];
-
-        for (int readNum; (readNum = fis.read(b)) != -1;) {
-            bos.write(b, 0, readNum);
-        }
-
-        byte[] bytes = bos.toByteArray();
-
-        Console.printout("Succefully loaded File " + path + "!", MessageType.INFO);
-        return bytes;
-    }
-
 
         public static void shutdown() {
             App.getInstance().serviceState = ServiceState.STOPPING;
