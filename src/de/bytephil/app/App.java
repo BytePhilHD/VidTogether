@@ -1,8 +1,7 @@
 package de.bytephil.app;
 
+import de.bytephil.utils.*;
 import de.bytephil.utils.Console;
-import de.bytephil.utils.MessageType;
-import de.bytephil.utils.ServiceState;
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import jline.console.ConsoleReader;
@@ -11,7 +10,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.api.Session;
-import de.bytephil.utils.UpdateConnection;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,7 +17,6 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import de.bytephil.utils.ServerConfiguration;
 
 public class App {
 
@@ -177,6 +174,7 @@ public class App {
        // Console.printout("Prerendering all Pictures...", MessageType.INFO);
        // loadPics();
 
+        Thread thread = UpdateThread.thread;
         if (!thread.isAlive()) {
            //thread.start();
         }
@@ -188,52 +186,7 @@ public class App {
         Console.input();
     }
 
-    public Thread thread = new Thread() {
-        @Override
-        public void run() {
-            int u = 1;
-            while (thread.isAlive()) {
-                if (u==11) u=1; else u++;
 
-                for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
-                    String sessionid = App.getInstance().sessions1.get(i);
-                    WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                    ByteBuffer buf = ByteBuffer.wrap(cachedImages.get(u));
-                    session.send(buf);
-                    if (showProcesses) {
-                        Console.printout("Sending Picture " + u + " to " + App.getInstance().sessionHashMap.size() + " Clients", MessageType.INFO);
-                    }
-                    //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                }
-                try {
-                    thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
-    public void loadPics() throws IOException {
-
-        BufferedImage originalImage = null;
-        for (int i = 1; i < 12; i++) {
-            try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/stopmotion/" + i + "JPG.jpg"));
-            } catch (IOException e) { e.printStackTrace(); }
-
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(originalImage, "jpg", baos);
-                baos.flush();
-                byte[] imageInByte = baos.toByteArray();
-                baos.close();
-                cachedImages.put(i, imageInByte);
-            } catch(Exception e1) {
-                Console.printout("ERROR BufferedImage: " + e1.getMessage(), MessageType.ERROR);
-            }
-        }
-    }
 
         public static void shutdown() {
             App.getInstance().serviceState = ServiceState.STOPPING;
