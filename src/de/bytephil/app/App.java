@@ -42,6 +42,7 @@ public class App {
     public HashMap<String, byte[]> converted = new HashMap<>();
     public List<Integer> convertedList = new ArrayList<>();
     public List<String> sessions1 = new ArrayList<>();
+    public String currentPlaying = null;
 
     public boolean showProcesses = false;
 
@@ -112,6 +113,16 @@ public class App {
         } ).start();
         App.app = app;
 
+        app.ws("/wsinfo", ws -> {
+            ws.onConnect(ctx -> {
+                if (currentPlaying == null) {
+                    ctx.send("Welcome, currently theres nothing playing!");
+                }
+                else {
+                    ctx.send("Welcome, currently theres playing " + currentPlaying);
+                }
+            });
+                    });
         app.ws("/websockets", ws -> {
             ws.onConnect(ctx -> {
                 if (serviceState == ServiceState.ONLINE) {
@@ -121,8 +132,13 @@ public class App {
                     App.getInstance().sessions1.add(ctx.getSessionId());
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
-                   // ByteBuffer buf = ByteBuffer.wrap(convert("Files/Example.mp4")); //TODO Change this! If user has deleted it
-                    //ctx.send(buf);
+                    if (currentPlaying != null) {
+                        ByteBuffer buf = ByteBuffer.wrap(converted.get(currentPlaying));
+                        ctx.send(buf);
+                    }
+                    else {
+                        ctx.send("No Video is playing.");
+                    }
                 }
             });
             ws.onClose(ctx -> {

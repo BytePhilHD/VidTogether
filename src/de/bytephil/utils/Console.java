@@ -26,12 +26,14 @@ public class Console {
     private static String getTime() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
+
     public static void input() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         String input = null;
         try {
             input = reader.readLine();
+
             if (input.contains("load")) {
                 if (input.equalsIgnoreCase("load")) {
                     printout("Use \"load [Name to mp4 File] \"", MessageType.ERROR);
@@ -44,6 +46,7 @@ public class Console {
                         ByteBuffer buf = ByteBuffer.wrap(Converter.convert("Files/" + fileName, fileName));
                         int clients = App.getInstance().sessionHashMap.size();
                         Console.printout("Sending loaded Video to all " + clients + " connected Clients!", MessageType.INFO);
+                        App.getInstance().currentPlaying = fileName;
 
                         for (int i = 0; i < clients; i++) {
                             String sessionid = App.getInstance().sessions1.get(i);
@@ -85,6 +88,7 @@ public class Console {
                         Console.printout("The WebSocket processes are shown now!", MessageType.INFO);
                         App.getInstance().showProcesses = true;
                     }
+                    Console.input();
                 }
                 Console.printout("Command not found! Use \"help\" for Help!", MessageType.ERROR);
                 Console.input();

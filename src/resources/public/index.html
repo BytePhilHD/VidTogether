@@ -27,10 +27,11 @@
             <div class="text">
                 <h2>TestWebsite - UploadServer.jar</h2>
                 <p>Hier werden Dinge getestet!</p>
-                <video data-w2g="['__camstream', 'srcobj'], ['self', 'mute'], ['camVolume', 'volume']" id="webanswer" autoplay playsinline></video>
+                <video width="320" height="240" autoplay id="webanswer"></video>
                 <!-- <p id="webanswer"></p> -->
                 <!-- <video id="webanswer" autoplay></video> -->
                 <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button>
+                <p id="wsinfo"></p>
             </div>
         </section>
     </main>
@@ -45,12 +46,17 @@
     function setupWebSocket() {
         const textQuery = document.querySelector("#query");
         const textAnswer = document.querySelector("#webanswer");
+        const wsinfo = document.querySelector("#wsinfo");
         const urlCreator = window.URL || window.webkitURL;
         var i = 80;
         if (location.port != 0) {
             i = location.port;
         }
         const ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
+        const ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
+        ws1.onmessage = messageEvent => {
+               wsinfo.innerHTML = messageEvent.data;
+        }
         ws.onopen = event => {
             console.log('Connection to Server established.');
         }
