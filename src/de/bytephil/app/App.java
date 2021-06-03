@@ -58,7 +58,17 @@ public class App {
     public void start() throws IOException {
 
         if (!new File("server.config").exists()) {
-            de.bytephil.utils.Console.printout("The config file is missing!", MessageType.WARNING);
+            de.bytephil.utils.Console.printout("The config file is missing! Creating default one.", MessageType.WARNING);
+            final File newFile = new File("server.config");
+            newFile.createNewFile();
+            final FileOutputStream configOutputStream = new FileOutputStream(newFile);
+            byte[] buffer = new byte[4096];
+            final InputStream defaultConfStream = getClass().getClassLoader().getResourceAsStream("default.config");
+            int readBytes;
+            while ((readBytes = defaultConfStream.read(buffer)) > 0) {
+                configOutputStream.write(buffer, 0, readBytes);
+            }
+            defaultConfStream.close();
         }
 
         // Load config
