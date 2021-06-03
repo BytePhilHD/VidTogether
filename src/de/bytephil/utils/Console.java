@@ -30,6 +30,19 @@ public class Console {
         String input = null;
         try {
             input = reader.readLine();
+            if (input.contains("load")) {
+                if (input.equalsIgnoreCase("load")) {
+                    printout("Use \"load [Name to mp4 File] \"", MessageType.ERROR);
+                } else {
+                    if (!input.contains(".mp4")) {
+                        printout("The File has to be a \".mp4\" File!", MessageType.ERROR);
+                    } else {
+                        String fileName = input.replace(" ", "").replace("load", "");
+                        printout("Trying to load File \"" + fileName + "\"...", MessageType.INFO);
+                        App.getInstance().convert("Files/" + fileName);
+                    }
+                }
+            }
             switch (Objects.requireNonNull(input)) {
                 case "exit":
                 case "stop": {

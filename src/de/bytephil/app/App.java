@@ -159,8 +159,8 @@ public class App {
             }
         }
 
-        Console.printout("Prerendering all Pictures...", MessageType.INFO);
-        loadPics();
+       // Console.printout("Prerendering all Pictures...", MessageType.INFO);
+       // loadPics();
 
         if (!thread.isAlive()) {
            //thread.start();
@@ -222,7 +222,12 @@ public class App {
 
     public byte[] convert(String path) throws IOException {
 
-        FileInputStream fis = new FileInputStream(path);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
+        } catch (Exception e1) {
+            Console.printout(e1.getMessage(), MessageType.ERROR);
+        }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] b = new byte[1024];
 
@@ -232,6 +237,7 @@ public class App {
 
         byte[] bytes = bos.toByteArray();
 
+        Console.printout("Succefully loaded File " + path + "!", MessageType.INFO);
         return bytes;
     }
 
