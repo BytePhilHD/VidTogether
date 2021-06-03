@@ -109,7 +109,7 @@ public class App {
                     App.getInstance().sessions1.add(ctx.getSessionId());
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
-                    ByteBuffer buf = ByteBuffer.wrap(convert("/Files/TEST.MP4"));
+                    ByteBuffer buf = ByteBuffer.wrap(convert("Files/TEST.MP4"));
                     ctx.send(buf);
                 }
             });
