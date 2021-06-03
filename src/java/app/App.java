@@ -25,6 +25,7 @@ public class App {
     private static Javalin app;
 
     private ConsoleReader reader = new ConsoleReader();
+    private PrintWriter writer = new PrintWriter(reader.getOutput());
 
     public static App getInstance() {
         return instance;
@@ -36,6 +37,8 @@ public class App {
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
     public HashMap<Integer, byte[]> cachedImages = new HashMap<>();
     public List<String> sessions1 = new ArrayList<>();
+
+    public boolean showProcesses = false;
 
     public ServiceState serviceState = ServiceState.STARTING;
 
@@ -117,7 +120,7 @@ public class App {
         Console.printout("All Services started! Waiting for Client connection on YourIP:" + app.port(), MessageType.INFO);
         Console.empty();
 
-        input();
+        Console.input();
     }
 
     public Thread thread = new Thread() {
@@ -133,10 +136,13 @@ public class App {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                     ByteBuffer buf = ByteBuffer.wrap(cachedImages.get(u));
                     session.send(buf);
+                    if (showProcesses) {
+                        Console.printout("Sending Picture " + u + " to " + App.getInstance().sessionHashMap.size() + " Clients", MessageType.INFO);
+                    }
                     //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
                 }
                 try {
-                    thread.sleep(200);
+                    thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -144,7 +150,7 @@ public class App {
         }
     };
 
-    public void loadPics() {
+    public void loadPics() throws IOException {
         BufferedImage originalImage = null;
         for (int i = 1; i < 12; i++) {
             try { originalImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("public/assets/img/stopmotion/" + i + "JPG.jpg"));
@@ -162,45 +168,7 @@ public class App {
             }
         }
     }
-        private static void input() throws IOException {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            String input = null;
-            try {
-                input = reader.readLine();
-                switch (Objects.requireNonNull(input)) {
-                    case "exit":
-                    case "stop": {
-                        shutdown();
-                    }
-                    case "help": {
-                        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-                        System.out.println(" Stop Program » exit");
-                        System.out.println(" Show help » help");
-                        System.out.println(" Show all connected Clients » list");
-                        App.input();
-                    }
-                    case "stopweb": {
-                        app.stop();
-                        System.out.println("The Webserver will be stopped!");
-                    }
-                    case "list": {
-                        Console.printout("All Connected Clients", MessageType.INFO);
-                        for (int i = 0; i < App.getInstance().sessionHashMap.size(); i++) {
-                            String sessionid = App.getInstance().sessions1.get(i);
-                            Session session = App.getInstance().sessionHashMap.get(sessionid);
-                            Console.printout(sessionid + " | IP: " + session.getRemoteAddress(), MessageType.INFO);
-                        }
-                        App.input();
-                    }
-                    Console.printout("Command not found! Use \"help\" for Help!", MessageType.ERROR);
-                    App.input();
-                }
-                App.input();
-            } catch (Exception e1) {
-                Console.printout("Reader Error: " + e1.getMessage(), MessageType.ERROR);
-            }
-        }
 
         public static void shutdown() {
             App.getInstance().serviceState = ServiceState.STOPPING;
