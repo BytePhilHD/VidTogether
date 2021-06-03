@@ -1,6 +1,6 @@
-package boot;
+package de.bytephil.boot;
 
-import app.App;
+import de.bytephil.app.App;
 
 import java.io.IOException;
 

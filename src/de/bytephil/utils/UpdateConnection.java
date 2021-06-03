@@ -1,9 +1,10 @@
-package utils;
+package de.bytephil.utils;
 
-import app.App;
+import de.bytephil.app.App;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.io.Console;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -82,8 +83,8 @@ public class UpdateConnection {
                 final FileOutputStream fileOutputStream = new FileOutputStream(file);
                 final BufferedOutputStream outputStream = new BufferedOutputStream(fileOutputStream, j);
 
-                Console.printout("Youre not on the latest Version!", MessageType.WARNING);
-                Console.printout("Starting download...", MessageType.INFO);
+                de.bytephil.utils.Console.printout("Youre not on the latest Version!", MessageType.WARNING);
+                de.bytephil.utils.Console.printout("Starting download...", MessageType.INFO);
 
                 final byte[] bytes = new byte[j];
                 int read;
@@ -95,11 +96,11 @@ public class UpdateConnection {
                 outputStream.close();
                 inputStream.close();
 
-                Console.printout("Download completed.", MessageType.INFO);
-                Console.printout("Shutting down...", MessageType.WARNING);
+                de.bytephil.utils.Console.printout("Download completed.", MessageType.INFO);
+                de.bytephil.utils.Console.printout("Shutting down...", MessageType.WARNING);
                 System.exit(1);
             } catch (Exception ex) {
-                Console.printout("Network error", MessageType.ERROR);
+                de.bytephil.utils.Console.printout("Network error", MessageType.ERROR);
             }
         }
 

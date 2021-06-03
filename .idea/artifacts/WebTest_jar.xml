@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/WebTest_jar</output-path>
     <root id="archive" name="WebTest.jar">
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/src/java/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/de/bytephil/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="WebTest" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/javalin/javalin/3.13.6/javalin-3.13.6.jar" path-in-jar="/" />

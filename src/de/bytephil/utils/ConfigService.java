@@ -1,4 +1,4 @@
-package utils;
+package de.bytephil.utils;
 import org.json.JSONObject;
 
 import java.io.File;
