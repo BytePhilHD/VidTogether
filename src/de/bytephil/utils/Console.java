@@ -2,7 +2,6 @@ package de.bytephil.utils;
 
 import de.bytephil.app.App;
 import jline.console.ConsoleReader;
-import org.bukkit.command.CommandException;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.BufferedReader;

@@ -55,21 +55,34 @@ public class App {
         this.downloader = new UpdateConnection.Downloader(updateConnection);
     }
 
+    public void copyFile(File newFile, String existingFile) throws IOException {
+        newFile.createNewFile();
+        final FileOutputStream configOutputStream = new FileOutputStream(newFile);
+        byte[] buffer = new byte[4096];
+        final InputStream defaultConfStream = getClass().getClassLoader().getResourceAsStream(existingFile);
+        int readBytes;
+        while ((readBytes = defaultConfStream.read(buffer)) > 0) {
+            configOutputStream.write(buffer, 0, readBytes);
+        }
+        defaultConfStream.close();
+    }
+
     public void start() throws IOException {
 
         if (!new File("server.config").exists()) {
             de.bytephil.utils.Console.printout("The config file is missing! Creating default one.", MessageType.WARNING);
             final File newFile = new File("server.config");
-            newFile.createNewFile();
-            final FileOutputStream configOutputStream = new FileOutputStream(newFile);
-            byte[] buffer = new byte[4096];
-            final InputStream defaultConfStream = getClass().getClassLoader().getResourceAsStream("default.config");
-            int readBytes;
-            while ((readBytes = defaultConfStream.read(buffer)) > 0) {
-                configOutputStream.write(buffer, 0, readBytes);
-            }
-            defaultConfStream.close();
+            copyFile(newFile, "default.config");
         }
+        if (!new File("Files/Help.yml").exists()) {
+            File dir = new File("Files");
+            if (!dir.exists()) dir.mkdirs();
+            final File newFile = new File("Files/Help.yml");
+            final File newFile2 = new File("Files/Example.mp4");
+            copyFile(newFile2, "Example.mp4");
+            copyFile(newFile, "Help.yml");
+        }
+
 
         // Load config
         config = new ServerConfiguration("server.config");
