@@ -173,9 +173,6 @@ public class App {
             }
         }
 
-        // Console.printout("Prerendering all Pictures...", MessageType.INFO);
-        // loadPics();
-
         Thread thread = UpdateThread.thread;
         if (!thread.isAlive()) {
             //thread.start();
