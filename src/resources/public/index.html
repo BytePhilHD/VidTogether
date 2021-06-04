@@ -52,12 +52,22 @@
         const textAnswer = document.querySelector("#webanswer");
         const wsinfo = document.querySelector("#wsinfo");
         const urlCreator = window.URL || window.webkitURL;
-        var i = 80;
+        let i = 80;
         if (location.port != 0) {
             i = location.port;
         }
-        const ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
-        const ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
+        let ws;
+        let ws1;
+        if (location.protocol === "https:") {
+            ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
+            ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
+            console.log('Test1');
+        } else {
+            ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
+            ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
+            console.log('Test2');
+        }
+
         ws1.onmessage = messageEvent => {
                wsinfo.innerHTML = messageEvent.data;
         }
