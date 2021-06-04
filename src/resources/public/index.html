@@ -61,11 +61,9 @@
         if (location.protocol === "https:") {
             ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
             ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
-            console.log('Test1');
         } else {
             ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
             ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
-            console.log('Test2');
         }
 
         ws1.onmessage = messageEvent => {
