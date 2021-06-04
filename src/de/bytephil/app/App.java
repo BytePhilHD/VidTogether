@@ -67,8 +67,10 @@ public class App {
             if (!dir.exists()) dir.mkdirs();
             final File newFile = new File("Files/Help.yml");
             final File newFile2 = new File("Files/Example.mp4");
-            copyFile(newFile2, "Example.mp4");
+            final File newFile3 = new File("Files/Demo.mp4");
             copyFile(newFile, "Help.yml");
+            copyFile(newFile2, "Example.mp4");
+            copyFile(newFile3, "Demo.mp4");
             firstStart = true;
         }
 
@@ -123,7 +125,14 @@ public class App {
                         ByteBuffer buf = ByteBuffer.wrap(converted.get(currentPlaying));
                         ctx.send(buf);
                     } else {
-                        ctx.send("No Video is playing.");
+                        ByteBuffer buf = null;
+                        try {buf = ByteBuffer.wrap(Converter.convert("Files/Demo.mp4", "Demo.mp4")); }
+                        catch (Exception e1) { }
+                        if (buf != null)
+                        ctx.send(buf);
+                        else {
+                            ctx.send("No Video is playing!");
+                        }
                     }
                 }
             });
@@ -171,6 +180,8 @@ public class App {
                     serviceState = ServiceState.ONLINE;
                 }
             }
+        } else {
+            serviceState = serviceState.ONLINE;
         }
 
         Thread thread = UpdateThread.thread;

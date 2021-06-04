@@ -31,7 +31,7 @@ public class Converter {
             return bytes;
         } else {
             byte[] bytes = App.getInstance().converted.get(name);
-            Console.printout("The File was already loaded!", MessageType.WARNING);
+            Console.printout("The File \""+ name + "\" was already loaded!", MessageType.WARNING);
             return bytes;
         }
     }
