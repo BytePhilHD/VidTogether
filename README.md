@@ -28,7 +28,7 @@ instead of "WebTest".
 `screen -AmdS WebTest java -Xmx1G -jar WebTest.jar`. If you havent already we recommend
 installing screen (apt install screen), if you dont want to use it, just write the same as on Windows.
 
-No start the file (Windows doubleclick, Linux ./start.sh). The Programm should start up.
+Now start the file (Windows doubleclick, Linux ./start.sh). The Programm should start up.
 If you're running the Programm at home, you may need to release your Port (standard 80) in your
 Routers setting.
 
