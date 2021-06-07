@@ -1,4 +1,4 @@
-package de.bytephil.utils;
+package enums;
 
 public enum ServiceState {
     STARTING, ONLINE, STOPPING;

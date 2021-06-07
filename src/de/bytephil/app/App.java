@@ -2,6 +2,8 @@ package de.bytephil.app;
 
 import de.bytephil.utils.*;
 import de.bytephil.utils.Console;
+import enums.MessageType;
+import enums.ServiceState;
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import jline.console.ConsoleReader;

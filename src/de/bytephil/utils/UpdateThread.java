@@ -1,6 +1,7 @@
 package de.bytephil.utils;
 
 import de.bytephil.app.App;
+import enums.MessageType;
 import io.javalin.websocket.WsConnectContext;
 
 import java.time.format.DateTimeFormatter;

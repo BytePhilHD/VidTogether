@@ -1,10 +1,10 @@
 package de.bytephil.utils;
 
 import de.bytephil.app.App;
+import enums.MessageType;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.io.Console;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
