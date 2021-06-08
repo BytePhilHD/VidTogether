@@ -4,6 +4,7 @@ import de.bytephil.app.App;
 import de.bytephil.enums.MessageType;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -19,7 +20,10 @@ public class Converter {
                 Console.printout(e1.getMessage(), MessageType.ERROR);
             }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] b = new byte[16384];
+            File file = new File(path);
+            int size = (int) file.length();
+
+            byte[] b = new byte[size];
 
             for (int readNum; (readNum = fis.read(b)) != -1;) {
                 bos.write(b, 0, readNum);

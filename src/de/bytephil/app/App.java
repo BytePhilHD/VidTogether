@@ -34,9 +34,7 @@ public class App {
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
-    public HashMap<Integer, byte[]> cachedImages = new HashMap<>();
     public HashMap<String, byte[]> converted = new HashMap<>();
-    public List<Integer> convertedList = new ArrayList<>();
     public List<String> sessions = new ArrayList<>();
     public String currentPlaying = null;
 
