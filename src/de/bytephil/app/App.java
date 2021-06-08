@@ -2,8 +2,8 @@ package de.bytephil.app;
 
 import de.bytephil.utils.*;
 import de.bytephil.utils.Console;
-import enums.MessageType;
-import enums.ServiceState;
+import de.bytephil.enums.MessageType;
+import de.bytephil.enums.ServiceState;
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
 import jline.console.ConsoleReader;
@@ -25,9 +25,6 @@ public class App {
     private final UpdateConnection.Downloader downloader;
     private static Javalin app;
     private ServerConfiguration config;
-
-    private ConsoleReader reader = new ConsoleReader();
-    private PrintWriter writer = new PrintWriter(reader.getOutput());
 
     public static App getInstance() {
         return instance;

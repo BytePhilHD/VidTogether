@@ -1,6 +1,6 @@
 package de.bytephil.utils;
 
-import enums.MessageType;
+import de.bytephil.enums.MessageType;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

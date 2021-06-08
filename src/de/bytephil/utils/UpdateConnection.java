@@ -1,7 +1,7 @@
 package de.bytephil.utils;
 
 import de.bytephil.app.App;
-import enums.MessageType;
+import de.bytephil.enums.MessageType;
 import org.json.JSONObject;
 
 import java.io.*;

@@ -1,7 +1,7 @@
 package de.bytephil.utils;
 
 import de.bytephil.app.App;
-import enums.MessageType;
+import de.bytephil.enums.MessageType;
 import io.javalin.websocket.WsConnectContext;
 import org.eclipse.jetty.websocket.api.Session;
 
@@ -29,7 +29,7 @@ public class Console {
     public static void input() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        String input = null;
+        String input;
         try {
             input = reader.readLine();
 
@@ -40,19 +40,24 @@ public class Console {
                     if (!input.contains(".mp4")) {
                         printout("The File has to be a \".mp4\" File!", MessageType.ERROR);
                     } else {
-                        String fileName = input.replace(" ", "").replace("load", "");
-                        printout("Trying to load File \"" + fileName + "\"...", MessageType.INFO);
-                        ByteBuffer buf = ByteBuffer.wrap(Converter.convert("Files/" + fileName, fileName, false));
-                        int clients = App.getInstance().sessionHashMap.size();
-                        Console.printout("Sending loaded Video to all " + clients + " connected Clients!", MessageType.INFO);
-                        App.getInstance().currentPlaying = fileName;
+                        try {
+                            String fileName = input.replace(" ", "").replace("load", "");
+                            printout("Trying to load File \"" + fileName + "\"...", MessageType.INFO);
+                            ByteBuffer buf = ByteBuffer.wrap(Converter.convert("Files/" + fileName, fileName, false));
+                            int clients = App.getInstance().sessionHashMap.size();
+                            Console.printout("Sending loaded Video to all " + clients + " connected Clients!", MessageType.INFO);
+                            App.getInstance().currentPlaying = fileName;
 
-                        for (int i = 0; i < clients; i++) {
-                            String sessionid = App.getInstance().sessions.get(i);
-                            WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                            session.send(buf);
-                            //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                            for (int i = 0; i < clients; i++) {
+                                String sessionid = App.getInstance().sessions.get(i);
+                                WsConnectContext session = App.getInstance().sessionctx.get(sessionid);
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                                session.send(buf);
+                                //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                            }
+                        } catch (Exception e1) {
+                            printout(e1.getMessage(), MessageType.ERROR);
+                            Console.input();
                         }
                     }
                 }
