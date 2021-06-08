@@ -21,11 +21,11 @@ Download the newest Version from the Releases Page.
 **Install Java 11, if you havent already**
 
 **Windows:** Create a batch file (e.g. "start.bat") in that you need the Line 
-`java -Xmx1G -jar WebTest.jar`. If you rename your .jar file, type your new Name
+`java -Xmx1G -jar VidTogether.jar`. If you rename your .jar file, type your new Name
 instead of "WebTest". 
 
 **Linux:** Create a sh file (e.g. "start.sh") in that you need the Line
-`screen -AmdS WebTest java -Xmx1G -jar WebTest.jar`. If you havent already we recommend
+`screen -AmdS VidTogether java -Xmx1G -jar VidTogether.jar`. If you havent already we recommend
 installing screen (apt install screen), if you dont want to use it, just write the same as on Windows.
 
 Now start the file (Windows doubleclick, Linux ./start.sh). The Programm should start up.

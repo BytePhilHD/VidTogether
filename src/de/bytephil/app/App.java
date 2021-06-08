@@ -128,7 +128,7 @@ public class App {
                         ctx.send(buf);
                     } else {
                         ByteBuffer buf = null;
-                        try {buf = ByteBuffer.wrap(Converter.convert("Files/Demo.mp4", "Demo.mp4")); }
+                        try {buf = ByteBuffer.wrap(Converter.convert("Files/Demo.mp4", "Demo.mp4", true)); }
                         catch (Exception e1) { }
                         if (buf != null)
                         ctx.send(buf);

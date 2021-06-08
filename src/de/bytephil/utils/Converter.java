@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Converter {
 
-    public static byte[] convert(String path, String name) throws IOException {
+    public static byte[] convert(String path, String name, boolean System) throws IOException {
 
         if (!App.getInstance().converted.containsKey(name)) {
             FileInputStream fis = null;
@@ -32,6 +32,7 @@ public class Converter {
             return bytes;
         } else {
             byte[] bytes = App.getInstance().converted.get(name);
+            if (!System)
             Console.printout("The File \""+ name + "\" was already loaded!", MessageType.WARNING);
             return bytes;
         }

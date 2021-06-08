@@ -42,7 +42,7 @@ public class Console {
                     } else {
                         String fileName = input.replace(" ", "").replace("load", "");
                         printout("Trying to load File \"" + fileName + "\"...", MessageType.INFO);
-                        ByteBuffer buf = ByteBuffer.wrap(Converter.convert("Files/" + fileName, fileName));
+                        ByteBuffer buf = ByteBuffer.wrap(Converter.convert("Files/" + fileName, fileName, false));
                         int clients = App.getInstance().sessionHashMap.size();
                         Console.printout("Sending loaded Video to all " + clients + " connected Clients!", MessageType.INFO);
                         App.getInstance().currentPlaying = fileName;
