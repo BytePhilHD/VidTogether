@@ -6,6 +6,7 @@ import de.bytephil.enums.MessageType;
 import de.bytephil.enums.ServiceState;
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
+import io.javalin.websocket.WsMessageHandler;
 import jline.console.ConsoleReader;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -110,6 +111,13 @@ public class App {
             });
         });
         app.ws("/websockets", ws -> {
+            ws.onMessage(ctx -> {
+                //WsMessageHandler
+                String message = ctx.message();
+                if (message.equalsIgnoreCase("pause")) {
+
+                }
+            });
             ws.onConnect(ctx -> {
                 if (serviceState == ServiceState.ONLINE) {
                     Console.printout("Client connected with Session-ID: " + ctx.getSessionId() + " IP: " + ctx.session.getRemoteAddress()
