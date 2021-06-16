@@ -1,5 +1,6 @@
 package de.bytephil.app;
 
+import de.bytephil.enums.VideoState;
 import de.bytephil.utils.*;
 import de.bytephil.utils.Console;
 import de.bytephil.enums.MessageType;
@@ -13,6 +14,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -33,6 +35,7 @@ public class App {
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
+    public ArrayList<WsConnectContext> wsCMDctx = new ArrayList<>();
     public HashMap<String, byte[]> currentVideoBytes = new HashMap<>();
     public List<String> sessions = new ArrayList<>();
     public String currentPlaying = null;
@@ -40,6 +43,7 @@ public class App {
     public boolean showProcesses = false;
 
     public ServiceState serviceState = ServiceState.STARTING;
+    public VideoState videoState = VideoState.LOADING;
 
     public App() throws IOException {
         instance = this;
@@ -108,11 +112,64 @@ public class App {
                 }
             });
         });
+
+        app.ws("/wscmd", ws -> {
+            ws.onConnect(ctx -> {
+                if (videoState == VideoState.PLAYING) {
+                    ctx.send("play");
+                } else if (videoState == VideoState.PAUSED) {
+                    ctx.send("pause");
+                }
+                wsCMDctx.add(ctx);
+            });
+            ws.onClose(ctx -> {
+                wsCMDctx.remove(ctx);
+            });
+            ws.onMessage(ctx -> {
+                int max = wsCMDctx.size();
+                String message = ctx.message();
+                if (message.equalsIgnoreCase("play")) {
+                    videoState = VideoState.PLAYING;
+                    if (message.equalsIgnoreCase("play")) {
+                        for (int i = 0; i < max; i++) {
+                            wsCMDctx.get(i).send("play");
+                        }
+                    }
+                } else if (message.equalsIgnoreCase("pause")) {
+                    videoState = VideoState.PAUSED;
+                    if (message.equalsIgnoreCase("pause")) {
+                        for (int i = 0; i < max; i++) {
+                            wsCMDctx.get(i).send("play");
+                        }
+                    }
+                }
+            });
+        });
+
         app.ws("/websockets", ws -> {
             ws.onMessage(ctx -> {
-                //WsMessageHandler
                 String message = ctx.message();
-                if (message.equalsIgnoreCase("pause")) {
+
+                Console.printout("WebSocket: " + message + " | Session-ID: " + ctx.getSessionId(), MessageType.INFO);
+
+                int max = wsCMDctx.size();
+                if (message.equalsIgnoreCase("play")) {
+                    videoState = VideoState.PLAYING;
+                        for (int i = 0; i < max; i++) {
+                            WsConnectContext wsConnectContext = wsCMDctx.get(i);
+                            if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
+                                wsConnectContext.send("play");
+                            }
+
+                    }
+                } else if (message.equalsIgnoreCase("pause")) {
+                    videoState = VideoState.PAUSED;
+                        for (int i = 0; i < max; i++) {
+                            WsConnectContext wsConnectContext = wsCMDctx.get(i);
+                            if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
+                                wsConnectContext.send("pause");
+                            }
+                        }
 
                 }
             });
@@ -129,10 +186,12 @@ public class App {
                         ctx.send(buf);
                     } else {
                         ByteBuffer buf = null;
-                        try {buf = ByteBuffer.wrap(Converter.convert("Files/Demo.mp4", "Demo.mp4", true)); }
-                        catch (Exception e1) { }
+                        try {
+                            buf = ByteBuffer.wrap(Converter.convert("Files/Demo.mp4", "Demo.mp4", true));
+                        } catch (Exception e1) {
+                        }
                         if (buf != null)
-                        ctx.send(buf);
+                            ctx.send(buf);
                         else {
                             ctx.send("No Video is playing!");
                         }
@@ -191,7 +250,7 @@ public class App {
         if (!thread.isAlive()) {
             //thread.start();
         }
-        Console.printout("Maximal usable Memory: " + Runtime.getRuntime().maxMemory()/1000000000 + " GB", MessageType.INFO);
+        Console.printout("Maximal usable Memory: " + Runtime.getRuntime().maxMemory() / 1000000000 + " GB", MessageType.INFO);
         Console.printout("Total CPU's: " + Runtime.getRuntime().availableProcessors(), MessageType.INFO);
         Console.empty();
 
@@ -200,7 +259,9 @@ public class App {
         if (firstStart) {
             Console.printout("It seems like you're running VidTogether for the first time!", MessageType.WARNING);
             Console.printout("For Help look into your Files Folder or on our GitHub Page!", MessageType.WARNING);
-            Console.empty(); Console.empty(); Console.empty();
+            Console.empty();
+            Console.empty();
+            Console.empty();
         }
         Console.input();
     }

@@ -6,62 +6,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Home - VidTogether</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic">
 </head>
 
 <body id="page-top">
 <header class="d-flex masthead" style="background-image: url('assets/img/bg-masthead.jpg');">
     <div class="container-fluid text-center my-auto text-center" style="width: 1368px;">
-        <h1 class="mb-1" style="height: 150px;margin: -45px;">VidTogether</h1><video class="bg-secondary border rounded-0 border-danger shadow" id="webanswer" width="560" height="315" controls="" style="width: 1379px;height: 660px;" autoplay=""></video>
+        <h1 class="mb-1" style="height: 150px;margin: -45px;">VidTogether</h1>
+        <video class="bg-secondary border rounded-0 border-danger shadow" id="webanswer" width="560" height="315"
+               style="width: 1379px;height: 660px;" autoplay=""></video>
+        <div class="btn-toolbar">
+            <div class="btn-group" role="group">
+                <button onclick="playVid()" class="btn btn-primary" type="button" style="margin: 4px;"> ▶ PLAY</button>
+                <button onclick="pauseVid()" class="btn btn-primary" type="button" style="margin: 4px;"> ■ PAUSE
+                </button>
+            </div>
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary" type="button" style="margin: 4px;">N/A</button>
+                <button class="btn btn-primary" type="button" style="margin: 4px;">N/A</button>
+            </div>
+        </div>
         <h2 id="wsinfo">Connecting to Server...</h2>
     </div>
+    <script>
+        var vid = document.getElementById("webanswer");
+
+        function playVid() {
+            vid.play();
+            ws.send("PLAY");
+        }
+
+        function pauseVid() {
+            vid.pause();
+            ws.send("PAUSE");
+        }
+    </script>
 </header>
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 <script src="assets/js/stylish-portfolio.js"></script>
 
-    <script>
-        window.onload = setupWebSocket;
-        function setupWebSocket() {
-            const textQuery = document.querySelector("#query");
-            const textAnswer = document.querySelector("#webanswer");
-            const wsinfo = document.querySelector("#wsinfo");
-            const urlCreator = window.URL || window.webkitURL;
-            let i = 80;
-            if (location.port != 0) {
-                i = location.port;
-            }
-            let ws;
-            let ws1;
-            if (location.protocol === "https:") {
-                ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
-                ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
-            } else {
-                ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
-                ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
-            }
+<script>
+    window.onload = setupWebSocket;
+    let ws;
+    let ws1;
+    let wscmd;
 
-            ws1.onmessage = messageEvent => {
-                wsinfo.innerHTML = messageEvent.data;
-            }
-            ws.onopen = event => {
-                console.log('Connection to Server established.');
-            }
-            ws.onmessage = messageEvent => {
-                var imageUrl = urlCreator.createObjectURL(messageEvent.data);
-                textAnswer.src = imageUrl;
-            }
-            ws.onerror = event => {
-                textAnswer.innerHTML = 'Error - Server offline';
-                console.log('Server Error!');
-            }
-            ws.onclose = closeEvent => {
-                console.log('Connection to Server closed!');
-                setupWebSocket();
+    function setupWebSocket() {
+        // const textQuery = document.querySelector("#query");
+        const textAnswer = document.querySelector("#webanswer");
+        const wsinfo = document.querySelector("#wsinfo");
+        const urlCreator = window.URL || window.webkitURL;
+        let i = 80;
+        if (location.port != 0) {
+            i = location.port;
+        }
+        if (location.protocol === "https:") {
+            ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
+            ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
+            wscmd = new WebSocket("wss://" + location.hostname + ":" + i + "/wscmd");
+        } else {
+            ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
+            ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
+            wscmd = new WebSocket("ws://" + location.hostname + ":" + i + "/wscmd");
+        }
+
+        ws1.onmessage = messageEvent => {
+            wsinfo.innerHTML = messageEvent.data;
+        }
+        wscmd.onmessage = messageEvent => {
+            var vid = document.getElementById("webanswer");
+            var message = messageEvent.data;
+            if (message == "play") {
+                vid.play();
+                console.log("INFO: played Video");
+            } else if (message == "pause") {
+                vid.pause();
+                console.log("INFO: Paused Video");
             }
         }
-    </script>
+        ws.onmessage = messageEvent => {
+            var imageUrl = urlCreator.createObjectURL(messageEvent.data);
+            textAnswer.src = imageUrl;
+        }
+        ws.onerror = event => {
+            textAnswer.innerHTML = 'Error - Server offline';
+            console.log('Server Error!');
+        }
+        ws.onclose = closeEvent => {
+            console.log('Connection to Server closed!');
+            setupWebSocket();
+        }
+    }
+</script>
 </body>
 
 </html>
