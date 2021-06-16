@@ -104,6 +104,10 @@ public class App {
         }).start();
         App.app = app;
 
+        app.error(404, ctx -> {
+            ctx.render("/public/errors/404.html");
+        });
+
         app.ws("/wsinfo", ws -> {
             ws.onConnect(ctx -> {
                 if (currentPlaying == null) {
