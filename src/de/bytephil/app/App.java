@@ -31,11 +31,12 @@ public class App {
         return instance;
     }
 
-    public String version = "0.0.4";
+    public String version = "0.0.5";
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
     public ArrayList<WsConnectContext> wsCMDctx = new ArrayList<>();
+    public ArrayList<WsConnectContext> infoctx = new ArrayList<>();
     public HashMap<String, byte[]> currentVideoBytes = new HashMap<>();
     public List<String> sessions = new ArrayList<>();
     public String currentPlaying = null;
@@ -155,22 +156,20 @@ public class App {
                 int max = wsCMDctx.size();
                 if (message.equalsIgnoreCase("play")) {
                     videoState = VideoState.PLAYING;
-                        for (int i = 0; i < max; i++) {
-                            WsConnectContext wsConnectContext = wsCMDctx.get(i);
-                            if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
-                                wsConnectContext.send("play");
-                            }
-
+                    for (int i = 0; i < max; i++) {
+                        WsConnectContext wsConnectContext = wsCMDctx.get(i);
+                        if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
+                            wsConnectContext.send("play");
+                        }
                     }
                 } else if (message.equalsIgnoreCase("pause")) {
                     videoState = VideoState.PAUSED;
-                        for (int i = 0; i < max; i++) {
-                            WsConnectContext wsConnectContext = wsCMDctx.get(i);
-                            if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
-                                wsConnectContext.send("pause");
-                            }
+                    for (int i = 0; i < max; i++) {
+                        WsConnectContext wsConnectContext = wsCMDctx.get(i);
+                        if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
+                            wsConnectContext.send("pause");
                         }
-
+                    }
                 }
             });
             ws.onConnect(ctx -> {

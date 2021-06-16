@@ -8,8 +8,8 @@
 
 - [x] Config
 - [x] Load Videos from Files Folder and play them to all Clients
+- [x] Play / Pause Video for all other Clients
 - [ ] Password protected Rooms
-- [ ] Video Pause Function
 - [ ] Room Chat
 
 Newest Release:
@@ -18,7 +18,7 @@ Newest Release:
 <h1>How to install</h1>
 Download the newest Version from the Releases Page.
 
-**Install Java 11, if you havent already**
+**IMPORTANT: Install Java 11, if you havent already**
 
 **Windows:** Create a batch file (e.g. "start.bat") in that you need the Line 
 `java -Xmx1G -jar VidTogether.jar`. If you rename your .jar file, type your new Name
