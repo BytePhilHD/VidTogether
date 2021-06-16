@@ -110,11 +110,15 @@ public class App {
 
         app.ws("/wsinfo", ws -> {
             ws.onConnect(ctx -> {
+                infoctx.add(ctx);
                 if (currentPlaying == null) {
                     ctx.send("Welcome, currently theres nothing playing!");
                 } else {
                     ctx.send("Welcome, currently theres playing \"" + currentPlaying.replace(".mp4", "") + "\"");
                 }
+            });
+            ws.onClose(ctx -> {
+                infoctx.remove(ctx);
             });
         });
 
@@ -158,20 +162,22 @@ public class App {
                 Console.printout("WebSocket: " + message + " | Session-ID: " + ctx.getSessionId(), MessageType.INFO);
 
                 int max = wsCMDctx.size();
-                if (message.equalsIgnoreCase("play")) {
+                if (message.contains("PLAY")) {
                     videoState = VideoState.PLAYING;
+
                     for (int i = 0; i < max; i++) {
                         WsConnectContext wsConnectContext = wsCMDctx.get(i);
                         if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
-                            wsConnectContext.send("play");
+                            wsConnectContext.send(message);
                         }
                     }
-                } else if (message.equalsIgnoreCase("pause")) {
+                } else if (message.contains("PAUSE")) {
                     videoState = VideoState.PAUSED;
+
                     for (int i = 0; i < max; i++) {
                         WsConnectContext wsConnectContext = wsCMDctx.get(i);
-                        if (wsConnectContext.getSessionId() != ctx.getSessionId()) {
-                            wsConnectContext.send("pause");
+                        if (!(wsConnectContext.getSessionId().equals(ctx.getSessionId()))) {
+                            wsConnectContext.send(message);
                         }
                     }
                 }

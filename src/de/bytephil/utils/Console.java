@@ -55,6 +55,9 @@ public class Console {
                                 session.send(buf);
                                 //session.send("Aktuelle Zeit: " + ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(DateTimeFormatter.ofPattern("HH:mm:ss")));
                             }
+                            for (int i = 0; i < App.getInstance().infoctx.size(); i++) {
+                                App.getInstance().infoctx.get(i).send("Currently theres playing \"" + fileName.replace(".mp4", "") + "\"");
+                            }
                         } catch (Exception e1) {
                             printout(e1.getMessage(), MessageType.ERROR);
                             Console.input();
