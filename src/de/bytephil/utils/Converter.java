@@ -12,7 +12,6 @@ public class Converter {
 
     public static byte[] convert(String path, String name, boolean System) throws IOException {
 
-        if (!App.getInstance().converted.containsKey(name)) {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(path);
@@ -31,14 +30,11 @@ public class Converter {
 
             byte[] bytes = bos.toByteArray();
 
-            App.getInstance().converted.put(name, bytes);
-            Console.printout("Succefully loaded File " + path + "!", MessageType.INFO);
+            if (!App.getInstance().currentVideoBytes.containsKey(name)) {
+                Console.printout("Succefully loaded File " + path + "!", MessageType.INFO);
+                App.getInstance().currentVideoBytes.clear();
+                App.getInstance().currentVideoBytes.put(name, bytes);
+            }
             return bytes;
-        } else {
-            byte[] bytes = App.getInstance().converted.get(name);
-            if (!System)
-            Console.printout("The File \""+ name + "\" was already loaded!", MessageType.WARNING);
-            return bytes;
-        }
     }
 }

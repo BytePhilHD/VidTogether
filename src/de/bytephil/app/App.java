@@ -6,8 +6,6 @@ import de.bytephil.enums.MessageType;
 import de.bytephil.enums.ServiceState;
 import io.javalin.Javalin;
 import io.javalin.websocket.WsConnectContext;
-import io.javalin.websocket.WsMessageHandler;
-import jline.console.ConsoleReader;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -35,7 +33,7 @@ public class App {
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
-    public HashMap<String, byte[]> converted = new HashMap<>();
+    public HashMap<String, byte[]> currentVideoBytes = new HashMap<>();
     public List<String> sessions = new ArrayList<>();
     public String currentPlaying = null;
 
@@ -106,7 +104,7 @@ public class App {
                 if (currentPlaying == null) {
                     ctx.send("Welcome, currently theres nothing playing!");
                 } else {
-                    ctx.send("Welcome, currently theres playing " + currentPlaying.replace(".mp4", ""));
+                    ctx.send("Welcome, currently theres playing \"" + currentPlaying.replace(".mp4", "") + "\"");
                 }
             });
         });
@@ -127,7 +125,7 @@ public class App {
                     ctx.send("Client connects..");
                     sessionctx.put(ctx.getSessionId(), ctx);
                     if (currentPlaying != null) {
-                        ByteBuffer buf = ByteBuffer.wrap(converted.get(currentPlaying));
+                        ByteBuffer buf = ByteBuffer.wrap(currentVideoBytes.get(currentPlaying));
                         ctx.send(buf);
                     } else {
                         ByteBuffer buf = null;
@@ -149,13 +147,13 @@ public class App {
                 sessionctx.remove(ctx.getSessionId());
             });
             ws.onError(ctx -> {
-                Console.printout("Websocket Error", MessageType.ERROR);
+                Console.printout("Websocket Error (Session-ID: " + ctx.getSessionId() + ")", MessageType.ERROR);
                 ctx.send("ERROR");
             });
         });
 
         app.get("/testpage", ctx -> {
-            ctx.render("/public/index.html");
+            ctx.render("/public/alt.html");
         });
 
         if (config.autoUpdate) {
@@ -193,6 +191,8 @@ public class App {
         if (!thread.isAlive()) {
             //thread.start();
         }
+        Console.printout("Maximal usable Memory: " + Runtime.getRuntime().maxMemory()/1000000000 + " GB", MessageType.INFO);
+        Console.printout("Total CPU's: " + Runtime.getRuntime().availableProcessors(), MessageType.INFO);
         Console.empty();
 
         Console.printout("All Services started! Waiting for Client connection on YourIP:" + app.port(), MessageType.INFO);

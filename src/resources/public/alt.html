@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>TestWebsite - BytePhil.de</title>
+    <link rel="stylesheet" href="assetsalt/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assetsalt/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="assetsalt/css/smoothproducts.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+        <div class="container"><a class="navbar-brand logo" href="#">BytePhil.de</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="alt.html">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="page landing-page">
+        <section class="clean-block clean-hero" style="background-image:url(&quot;assets/img/tech/image4.jpg&quot;);color:rgba(9, 162, 255, 0.85);">
+            <div class="text">
+                <h2>TestWebsite - UploadServer.jar</h2>
+                <p>Hier werden Dinge getestet!</p>
+                <video autoplay muted id="webanswer"></video>
+                <!-- <p id="webanswer"></p> -->
+                <!-- <video id="webanswer" autoplay></video> -->
+
+                <!--    <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button> -->
+                <p> </p>
+                <p id="wsinfo"></p>
+                <p> </p>
+                <button class="btn btn-outline-light btn-lg" onclick="href='https://github.com/BytePhilHD/VidTogether'">Learn More</button>
+            </div>
+        </section>
+    </main>
+    <script src="assetsalt/js/jquery.min.js"></script>
+    <script src="assetsalt/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    <script src="assetsalt/js/smoothproducts.min.js"></script>
+    <script src="assetsalt/js/theme.js"></script>
+
+    <script>
+    window.onload = setupWebSocket;
+    function setupWebSocket() {
+        const textQuery = document.querySelector("#query");
+        const textAnswer = document.querySelector("#webanswer");
+        const wsinfo = document.querySelector("#wsinfo");
+        const urlCreator = window.URL || window.webkitURL;
+        let i = 80;
+        if (location.port != 0) {
+            i = location.port;
+        }
+        let ws;
+        let ws1;
+        if (location.protocol === "https:") {
+            ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
+            ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
+        } else {
+            ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
+            ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
+        }
+
+        ws1.onmessage = messageEvent => {
+               wsinfo.innerHTML = messageEvent.data;
+        }
+        ws.onopen = event => {
+            console.log('Connection to Server established.');
+        }
+        ws.onmessage = messageEvent => {
+            var imageUrl = urlCreator.createObjectURL(messageEvent.data);
+            textAnswer.src = imageUrl;
+        }
+        ws.onerror = event => {
+            textAnswer.innerHTML = 'Error - Server offline';
+            console.log('Server Error!');
+        }
+        ws.onclose = closeEvent => {
+            console.log('Connection to Server closed!');
+            setupWebSocket();
+        }
+    }
+</script>
+</body>
+
+</html>

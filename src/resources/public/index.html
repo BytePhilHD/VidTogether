@@ -4,88 +4,64 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>TestWebsite - BytePhil.de</title>
+    <title>Home - VidTogether</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
-    <link rel="stylesheet" href="assets/css/smoothproducts.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic">
 </head>
 
-<body>
-    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
-        <div class="container"><a class="navbar-brand logo" href="#">BytePhil.de</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse"
-                id="navcol-1">
-                <ul class="nav navbar-nav ml-auto">
-                    <li class="nav-item" role="presentation"><a class="nav-link active" href="index.html">Home</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <main class="page landing-page">
-        <section class="clean-block clean-hero" style="background-image:url(&quot;assets/img/tech/image4.jpg&quot;);color:rgba(9, 162, 255, 0.85);">
-            <div class="text">
-                <h2>TestWebsite - UploadServer.jar</h2>
-                <p>Hier werden Dinge getestet!</p>
-                <video autoplay muted id="webanswer"></video>
-                <!-- <p id="webanswer"></p> -->
-                <!-- <video id="webanswer" autoplay></video> -->
-
-                <!--    <button class="btn btn-outline-light btn-lg" onclick="window.location.href='/testpage'">Learn More</button> -->
-                <p id="wsinfo"></p>
-                <p> </p>
-                <button class="btn btn-outline-light btn-lg" onclick="href='https://github.com/BytePhilHD/VidTogether'">Learn More</button>
-            </div>
-        </section>
-    </main>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
-    <script src="assets/js/smoothproducts.min.js"></script>
-    <script src="assets/js/theme.js"></script>
+<body id="page-top">
+<header class="d-flex masthead" style="background-image: url('assets/img/bg-masthead.jpg');">
+    <div class="container-fluid text-center my-auto text-center" style="width: 1368px;">
+        <h1 class="mb-1" style="height: 150px;margin: -45px;">VidTogether</h1><video class="bg-secondary border rounded-0 border-danger shadow" id="webanswer" width="560" height="315" controls="" style="width: 1379px;height: 660px;" autoplay=""></video>
+        <h2 id="wsinfo">Connecting to Server...</h2>
+    </div>
+</header>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="assets/js/stylish-portfolio.js"></script>
 
     <script>
-    window.onload = setupWebSocket;
-    function setupWebSocket() {
-        const textQuery = document.querySelector("#query");
-        const textAnswer = document.querySelector("#webanswer");
-        const wsinfo = document.querySelector("#wsinfo");
-        const urlCreator = window.URL || window.webkitURL;
-        let i = 80;
-        if (location.port != 0) {
-            i = location.port;
-        }
-        let ws;
-        let ws1;
-        if (location.protocol === "https:") {
-            ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
-            ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
-        } else {
-            ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
-            ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
-        }
+        window.onload = setupWebSocket;
+        function setupWebSocket() {
+            const textQuery = document.querySelector("#query");
+            const textAnswer = document.querySelector("#webanswer");
+            const wsinfo = document.querySelector("#wsinfo");
+            const urlCreator = window.URL || window.webkitURL;
+            let i = 80;
+            if (location.port != 0) {
+                i = location.port;
+            }
+            let ws;
+            let ws1;
+            if (location.protocol === "https:") {
+                ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
+                ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
+            } else {
+                ws = new WebSocket("ws://" + location.hostname + ":" + i + "/websockets");
+                ws1 = new WebSocket("ws://" + location.hostname + ":" + i + "/wsinfo");
+            }
 
-        ws1.onmessage = messageEvent => {
-               wsinfo.innerHTML = messageEvent.data;
+            ws1.onmessage = messageEvent => {
+                wsinfo.innerHTML = messageEvent.data;
+            }
+            ws.onopen = event => {
+                console.log('Connection to Server established.');
+            }
+            ws.onmessage = messageEvent => {
+                var imageUrl = urlCreator.createObjectURL(messageEvent.data);
+                textAnswer.src = imageUrl;
+            }
+            ws.onerror = event => {
+                textAnswer.innerHTML = 'Error - Server offline';
+                console.log('Server Error!');
+            }
+            ws.onclose = closeEvent => {
+                console.log('Connection to Server closed!');
+                setupWebSocket();
+            }
         }
-        ws.onopen = event => {
-            console.log('Connection to Server established.');
-        }
-        ws.onmessage = messageEvent => {
-            var imageUrl = urlCreator.createObjectURL(messageEvent.data);
-            textAnswer.src = imageUrl;
-        }
-        ws.onerror = event => {
-            textAnswer.innerHTML = 'Error - Server offline';
-            console.log('Server Error!');
-        }
-        ws.onclose = closeEvent => {
-            console.log('Connection to Server closed!');
-            setupWebSocket();
-        }
-    }
-</script>
+    </script>
 </body>
 
 </html>
