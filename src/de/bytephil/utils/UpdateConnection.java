@@ -76,7 +76,7 @@ public class UpdateConnection {
 
             try {
                 final URL url = new URL(connection.getDownload());
-                final File file = new File("WebTest.jar");
+                final File file = new File("VidTogether.jar");
 
                 final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 final BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
