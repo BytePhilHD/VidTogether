@@ -63,6 +63,8 @@
         if (location.port != 0) {
             i = location.port;
         }
+        var newSession = true;
+
         if (location.protocol === "https:") {
             ws = new WebSocket("wss://" + location.hostname + ":" + i + "/websockets");
             ws1 = new WebSocket("wss://" + location.hostname + ":" + i + "/wsinfo");
@@ -80,12 +82,19 @@
             var vid = document.getElementById("webanswer");
             var message = messageEvent.data;
 
-            if (message.includes("PLAY")) {
-                vid.currentTime = message.replace("PLAY - ", "");
-                vid.play();
-            } else if (message.includes("PAUSE")) {
-                vid.currentTime = message.replace("PAUSE - ", "");
-                vid.pause();
+            if (newSession == true && message.includes("TIME")) {
+                newSession = false;
+                vid.currentTime = message.replace("TIME - ", "");
+            } else {
+                if (message.includes("PLAY")) {
+                    vid.currentTime = message.replace("PLAY - ", "");
+                    vid.play();
+                } else if (message.includes("PAUSE")) {
+                    vid.currentTime = message.replace("PAUSE - ", "");
+                    vid.pause();
+                } else if (message.includes("info")) {
+                    wscmd.send("INFO - " + vid.currentTime);
+                }
             }
         }
         ws.onmessage = messageEvent => {

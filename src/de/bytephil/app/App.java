@@ -124,6 +124,10 @@ public class App {
 
         app.ws("/wscmd", ws -> {
             ws.onConnect(ctx -> {
+                int max = wsCMDctx.size();
+                for (int i = 0; i < max; i++) {
+                    wsCMDctx.get(i).send("info");
+                }
                 if (videoState == VideoState.PLAYING) {
                     ctx.send("play");
                 } else if (videoState == VideoState.PAUSED) {
@@ -150,6 +154,10 @@ public class App {
                         for (int i = 0; i < max; i++) {
                             wsCMDctx.get(i).send("play");
                         }
+                    }
+                } else if (message.contains("INFO")) {
+                    for (int i = 0; i < max; i++) {
+                        wsCMDctx.get(i).send(message.replace("INFO", "TIME"));
                     }
                 }
             });
