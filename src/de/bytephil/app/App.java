@@ -157,7 +157,14 @@ public class App {
                     }
                 } else if (message.contains("INFO")) {
                     for (int i = 0; i < max; i++) {
+                        String sendout = null;
                         wsCMDctx.get(i).send(message.replace("INFO", "TIME"));
+                        if (videoState == VideoState.PLAYING) {
+                            sendout = "PLA-YING";
+                        } else {
+                            sendout = "PAU-SED";
+                        }
+                        wsCMDctx.get(i).send("VIDSTATE - " + sendout);
                     }
                 }
             });
