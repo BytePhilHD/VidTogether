@@ -94,6 +94,8 @@
                     vid.pause();
                 } else if (message.includes("info")) {
                     wscmd.send("INFO - " + vid.currentTime);
+                }  else if (message.includes("thread")) {
+                    wscmd.send("THREAD - " + vid.currentTime);
                 } else if (message.includes("VIDSTATE")) {
                     if (message.replace("VIDSTATE - ", "").includes("PLA-YING")) {   //TODO Play Knopf, da sonst Video nicht abspielt (User muss erst inteagieren)
                         vid.play();    // (index):99 Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
@@ -112,7 +114,7 @@
             console.log('Server Error!');
         }
         ws.onclose = closeEvent => {
-            console.log('Connection to Server closed!');
+            console.log('Lost Connection to Server! Trying again...');
             setupWebSocket();
         }
     }

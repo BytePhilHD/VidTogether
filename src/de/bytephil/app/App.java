@@ -155,6 +155,9 @@ public class App {
                             wsCMDctx.get(i).send("play");
                         }
                     }
+                } else if (message.contains("THREAD")) {
+                    UpdateThread.time = Float.parseFloat(message.replace("THREAD - ", ""));
+
                 } else if (message.contains("INFO")) {
                     for (int i = 0; i < max; i++) {
                         String sendout = null;
@@ -223,8 +226,7 @@ public class App {
                 }
             });
             ws.onClose(ctx -> {
-                Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId() + ")"
-                        , MessageType.INFO);
+                Console.printout("Client disconnected (Session-ID: " + ctx.getSessionId() + ")", MessageType.INFO);
                 App.getInstance().sessionHashMap.remove(ctx.getSessionId());
                 App.getInstance().sessions.remove(ctx.getSessionId());
                 sessionctx.remove(ctx.getSessionId());
@@ -272,7 +274,7 @@ public class App {
 
         Thread thread = UpdateThread.thread;
         if (!thread.isAlive()) {
-            //thread.start();
+            thread.start();
         }
         Console.printout("Maximal usable Memory: " + Runtime.getRuntime().maxMemory() / 1000000000 + " GB", MessageType.INFO);
         Console.printout("Total CPU's: " + Runtime.getRuntime().availableProcessors(), MessageType.INFO);

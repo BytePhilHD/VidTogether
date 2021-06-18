@@ -1,5 +1,7 @@
 How to use:
 
+  [WARNING] If you delete this File, the Program will think that its the first start!
+
 Load your .mp4 Files into the Files Folder.
 
 Then go to your Console and type "load [filename]" (e.g. "Example.mp4").
