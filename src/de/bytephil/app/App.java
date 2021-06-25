@@ -31,7 +31,7 @@ public class App {
         return instance;
     }
 
-    public String version = "0.0.5";
+    private String version = "0.0.5";
 
     public HashMap<String, Session> sessionHashMap = new HashMap<>();
     public HashMap<String, WsConnectContext> sessionctx = new HashMap<>();
@@ -45,7 +45,11 @@ public class App {
 
     public ServiceState serviceState = ServiceState.STARTING;
     public VideoState videoState = VideoState.LOADING;
-
+    
+    public String getVersion() {
+        return version;
+    }
+    
     public App() throws IOException {
         instance = this;
 
@@ -53,6 +57,7 @@ public class App {
         this.downloader = new UpdateConnection.Downloader(updateConnection);
     }
 
+  
 
     public void start() throws IOException {
 
