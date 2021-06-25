@@ -36,7 +36,7 @@ public class UpdateConnection {
             return true;
 
         final String version = jsonObject.getString("Version");
-        final String current = App.getInstance().version;
+        final String current = App.getInstance().getVersion();
 
         if (current.compareTo(version) > 0) {
             return true;
