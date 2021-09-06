@@ -1,37 +1,41 @@
-## Welcome to GitHub Pages
+## Welcome to VidTogether
 
-You can use the [editor on GitHub](https://github.com/BytePhilHD/VidTogether/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Host your own Website, where you can watch your mp4 Videos with Others!
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+ The main Page for testing is [s2.bytephil.de](https://s2.bytephil.de)
+ 
+<h3>Features</h3>
 
-### Markdown
+- [x] Config
+- [x] Load Videos from Files Folder and play them to all Clients
+- [x] Play / Pause Video for all other Clients
+- [ ] Password protected Rooms
+- [ ] Room Chat
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Newest Release:
+[Releases](https://github.com/BytePhilHD/UploadServer/releases)
 
-```markdown
-Syntax highlighted code block
+<h1>How to install</h1>
+Download the newest Version from the Releases Page.
 
-# Header 1
-## Header 2
-### Header 3
+**IMPORTANT: Install Java 11, if you havent already**
 
-- Bulleted
-- List
+**Windows:** Create a batch file (e.g. "start.bat") in that you need the Line 
+`java -Xmx1G -jar VidTogether.jar`. If you rename your .jar file, type your new Name
+instead of "WebTest". 
 
-1. Numbered
-2. List
+**Linux:** Create a sh file (e.g. "start.sh") in that you need the Line
+`screen -AmdS VidTogether java -Xmx1G -jar VidTogether.jar`. If you havent already we recommend
+installing screen (apt install screen), if you dont want to use it, just write the same as on Windows.
 
-**Bold** and _Italic_ and `Code` text
+Now start the file (Windows doubleclick, Linux ./start.sh). The Programm should start up.
+If you're running the Programm at home, you may need to release your Port (standard 80) in your
+Routers setting.
 
-[Link](url) and ![Image](src)
-```
+Now you can access your Site via localhost (if you changed your Port localhost:YOURPORT) or
+use the IP Address instead of localhost
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/BytePhilHD/VidTogether/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
 ### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Check out my Website for more Information [BytePhil.de](https://bytephil.de/)
