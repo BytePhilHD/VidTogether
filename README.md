@@ -13,7 +13,7 @@
 - [ ] Room Chat
 
 Newest Release:
-[Releases](https://github.com/BytePhilHD/UploadServer/releases)
+[Releases](https://github.com/BytePhilHD/VidTogether/releases)
 
 <h1>How to install</h1>
 Download the newest Version from the Releases Page.
